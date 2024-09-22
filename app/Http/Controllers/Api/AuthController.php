@@ -13,24 +13,35 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
+    use HttpResponses;
+
+
     public function register(Request $request){
 
         try{
             $validateUser = Validator::make($request->all(),
-            [
-                'username' => 'required|string|max:50|unique:users',
-                'password' => 'required|string|min:8',
-                'email' => 'required|email|max:100|unique:users',
-                'phone' => 'required',
-                'role' => 'required|in:customer,technician',
-            ]);
+                [
+                    'username' => 'required|string|max:50|unique:users',
+                    'password' => 'required|string|min:8',
+                    'password_confirmation' => 'required|string|min:8',
+                    'email' => 'required|email|max:100|unique:users',
+                    'phone' => 'required',
+                    'role' => 'required|in:customer,technician',
+                    'address' => 'max:255',
+                    'payment_method' => 'max:50|in:cash,credit_card,e_wallet'
+                ]);
 
+            if($request->password !==  $request->password_confirmation) {
+                return $this->fail("Password mismatch");
+            }
             $user = User::create([
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'email' => $request->email,
-                'phone' => $request->phone, 
+                'phone' => $request->phone,
                 'role' => $request->role,
+                'address' => $request->address,
+                'payment_method' => $request->payment_method
             ]);
 
             $token = $user->createToken('API Token')->plainTextToken;
@@ -49,16 +60,17 @@ class AuthController extends Controller
         }
     }
 
-    public function checkLogin(Request $request){
-        try{
+    public function checkLogin(Request $request)
+    {
+        try {
             $validateUser = Validator::make($request->all(),
-            [
-                'email' => 'required|email|max:100',
-                'password' => 'required|string|min:8',
-            ]);
+                [
+                    'email' => 'required|email|max:100',
+                    'password' => 'required|string|min:8',
+                ]);
 
-            
-            if($validateUser->fails()) {
+
+            if ($validateUser->fails()) {
                 return response()->json([
                     'status' => false,
                     'message' => 'validate error',
@@ -85,17 +97,20 @@ class AuthController extends Controller
                 ], 200);
             }
 
-        }
-        catch(\Throwable $e){
+            return $this->fail('Password does not match', 401);
+
+
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
             ], 500);
         }
-        
+
     }
 
-    public function logout(){
+    public function logout()
+    {
         auth()->user()->tokens()->delete();
         return response()->json([
             'status' => true,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -20,10 +21,20 @@ use App\Http\Controllers\Api\ProfileController;
 //     return $request->user();
 // });
 
-Route::post("check-login",[AuthController::class, "checkLogin"]);
-Route::post("register",[AuthController::class, "register"]);
+Route::post("check-login", [AuthController::class, "checkLogin"]);
+Route::post("register", [AuthController::class, "register"]);
 
-Route::group(['middleware' => ["auth:sanctum"]], function() {
+Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::get("profile", [ProfileController::class, "profile"]);
-    Route::get("logout",[AuthController::class, "logout"]);
+    Route::put("profile", [ProfileController::class, "updateProfile"]);
+    Route::get("profile/address", [ProfileController::class, "profileAddress"]);
+    Route::put("profile/address", [ProfileController::class, "updateAddress"]);
+    Route::delete("profile/address", [ProfileController::class, "deleteAddress"]);
+
+    Route::put("profile/update-password", [ProfileController::class, "updatePassword"]);
+
+
+    Route::get("logout", [AuthController::class, "logout"]);
+
 });
+
