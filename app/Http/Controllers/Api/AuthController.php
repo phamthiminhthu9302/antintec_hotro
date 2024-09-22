@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateUserRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -16,20 +17,10 @@ class AuthController extends Controller
     use HttpResponses;
 
 
-    public function register(Request $request){
+    public function register(CreateUserRequest $request){
 
         try{
-            $validateUser = Validator::make($request->all(),
-                [
-                    'username' => 'required|string|max:50|unique:users',
-                    'password' => 'required|string|min:8',
-                    'password_confirmation' => 'required|string|min:8',
-                    'email' => 'required|email|max:100|unique:users',
-                    'phone' => 'required',
-                    'role' => 'required|in:customer,technician',
-                    'address' => 'max:255',
-                    'payment_method' => 'max:50|in:cash,credit_card,e_wallet'
-                ]);
+            $request->validated($request->all());
 
             if($request->password !==  $request->password_confirmation) {
                 return $this->fail("Password mismatch");
