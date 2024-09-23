@@ -17,12 +17,13 @@ class AuthController extends Controller
     use HttpResponses;
 
 
-    public function register(CreateUserRequest $request){
+    public function register(CreateUserRequest $request)
+    {
 
-        try{
+        try {
             $request->validated($request->all());
 
-            if($request->password !==  $request->password_confirmation) {
+            if ($request->password !== $request->password_confirmation) {
                 return $this->fail("Password mismatch");
             }
             $user = User::create([
@@ -42,8 +43,7 @@ class AuthController extends Controller
                 'message' => 'User create successfully',
                 'token' => $token,
             ], 200);
-        }
-        catch(\Throwable $e){
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
@@ -51,13 +51,32 @@ class AuthController extends Controller
         }
     }
 
+    public function username(): string
+    {
+        $login = request()->input('username');
+
+        if (is_numeric($login)) {
+            $field = 'phone';
+        } elseif (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            $field = 'email';
+        } else {
+            $field = 'username';
+        }
+
+        request()->merge([$field => $login]);
+        return $field;
+    }
+
     public function checkLogin(Request $request)
     {
         try {
+            $username = $this->username();
             $validateUser = Validator::make($request->all(),
                 [
-                    'email' => 'required|email|max:100',
+                    'email' => 'email|max:100',
                     'password' => 'required|string|min:8',
+                    'username' => 'string|max:50',
+                    'phone' => 'string|max:50',
                 ]);
 
 
@@ -69,7 +88,7 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $user = User::where('email', $request->email)->first();
+            $user = User::where($username, $request->username)->first();
 
             if (!$user) {
                 return response()->json([
