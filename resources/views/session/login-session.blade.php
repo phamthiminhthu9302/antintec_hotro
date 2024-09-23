@@ -21,8 +21,8 @@
                   @csrf
                   <label>Email/Phone</label>
                   <div class="mb-3">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="admin@softui.com" aria-label="Email" aria-describedby="email-addon">
-                    @error('email')
+                    <input type="text" class="form-control" name="identifier" id="email" placeholder="Email/Phone"  aria-label="Email" aria-describedby="email-addon">
+                    @error('identifier')
                     <p class="text-danger text-xs mt-2">{{ $message }}</p>
                     @enderror
                   </div>
