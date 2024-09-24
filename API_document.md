@@ -118,8 +118,8 @@ Authorization type: Bearer  **(token value)**
 
 ***BODY***
 <pre>
-{
-    "payment_method" : "credit_cards"
+{   "request_id" : 1,
+    "payment_method" : "credit_card"
 }</pre>
 
 ***RETURN***

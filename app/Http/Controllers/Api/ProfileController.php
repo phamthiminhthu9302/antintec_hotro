@@ -101,15 +101,23 @@ class ProfileController extends Controller
     public function updatePaymentMethod(Request $request): JsonResponse
     {
         $validated = request()->validate([
+            'request_id' => ['required', 'min:1'],
             'payment_method' => ['required', Rule::in('cash', 'credit_card', 'e_wallet')],
         ], ['payment_method.in' => 'Payment method must be in [cash, credit_card, e_wallet]']);
         //1. get customer id
         $user = auth()->user();
         $user_id = $user->user_id;
+        $requestId = $validated['request_id'];
         //2. from requests table with customer id, update payments method by request id
-        $requestData = \App\Models\Request::where('customer_id', $user_id)->get();
-        $paymentUpdated = Payment::where('request_id', $requestData[0]->request_id)->update(['payment_method' => $validated['payment_method']]);
-        return $this->success($paymentUpdated);
+        //3. change payment methods for specific request id
+        $requests = \App\Models\Request::where('customer_id', $user_id)->get();
+        foreach ($requests as $request) {
+            if ($request->request_id === $requestId) {
+                $paymentUpdated = Payment::where('request_id', $request->request_id)->update(['payment_method' => $validated['payment_method']]);
+                return $this->success($paymentUpdated);
+            }
+        }
+        return $this->fail("Invalid request");
     }
     //-------------------------------------
 }
