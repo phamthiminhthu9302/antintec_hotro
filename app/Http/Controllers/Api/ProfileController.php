@@ -9,8 +9,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-
+use App\Models\Payment;
 
 class ProfileController extends Controller
 {
@@ -39,14 +40,12 @@ class ProfileController extends Controller
             'phone' => ['string', 'max:15', 'unique:users'],
             'address' => ['string', 'max:255'],
             'role' => ['string', 'max:15'],
-            'payment_method' => ['string', 'max:50', 'in:cash,credit_card,e_wallet'],
         ]);
 
         $user = auth()->user();
         $user->phone = $validated['phone'];
         $user->address = $validated['address'];
         $user->role = $validated['role'];
-        $user->payment_method = $validated['payment_method'];
         $user->save();
 
 
@@ -96,6 +95,21 @@ class ProfileController extends Controller
         ]);
         $this->setField('role', $validated['role']);
         return $this->success(auth()->user());
+    }
+
+
+    public function updatePaymentMethod(Request $request): JsonResponse
+    {
+        $validated = request()->validate([
+            'payment_method' => ['required', Rule::in('cash', 'credit_card', 'e_wallet')],
+        ], ['payment_method.in' => 'Payment method must be in [cash, credit_card, e_wallet]']);
+        //1. get customer id
+        $user = auth()->user();
+        $user_id = $user->user_id;
+        //2. from requests table with customer id, update payments method by request id
+        $requestData = \App\Models\Request::where('customer_id', $user_id)->get();
+        $paymentUpdated = Payment::where('request_id', $requestData[0]->request_id)->update(['payment_method' => $validated['payment_method']]);
+        return $this->success($paymentUpdated);
     }
     //-------------------------------------
 }

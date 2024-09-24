@@ -32,7 +32,7 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::delete("profile/address", [ProfileController::class, "deleteAddress"]);
 
     Route::put("profile/update-password", [ProfileController::class, "updatePassword"]);
-
+    Route::put("profile/payment", [ProfileController::class, "updatePaymentMethod"]);
 
     Route::get("logout", [AuthController::class, "logout"]);
 

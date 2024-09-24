@@ -33,7 +33,6 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'role' => $request->role,
                 'address' => $request->address,
-                'payment_method' => $request->payment_method
             ]);
 
             $token = $user->createToken('API Token')->plainTextToken;

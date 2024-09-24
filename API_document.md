@@ -77,9 +77,6 @@ Authorization type: Bearer  ***(token value)***
 </pre>
 
 
-
-
-
 ### UPDATE PROFILE
 HTTP METHOD: PUT\
 URL: http://localhost:8000/api/profile \
@@ -113,3 +110,22 @@ Authorization type: Bearer  **(token value)**
 </pre>
 
 
+### CHANGE PAYMENT METHOD
+HTTP METHOD: PUT\
+URL: http://localhost:8000/api/profile/payment \
+DATA TYPE: JSON\
+Authorization type: Bearer  **(token value)**
+
+***BODY***
+<pre>
+{
+    "payment_method" : "credit_cards"
+}</pre>
+
+***RETURN***
+<pre>
+{
+    "status": "SUCCESS",
+    "data": 1,
+    "message": "Operation successfully"
+}</pre>

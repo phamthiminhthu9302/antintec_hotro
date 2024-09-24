@@ -28,8 +28,7 @@ class CreateUserRequest extends FormRequest
             'email' => 'required|email|max:100|unique:users',
             'phone' => 'required|unique:users',
             'role' => 'required|in:customer,technician',
-            'address' => 'max:255',
-            'payment_method' => 'max:50|in:cash,credit_card,e_wallet'
+            'address' => 'max:255'
         ];
     }
 }
