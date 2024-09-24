@@ -103,7 +103,7 @@
                 <h6 class="mb-0">{{ __('Profile Information') }}</h6>
             </div>
             <div class="card-body pt-4 p-3">
-                <form action="/user-profile" method="POST" role="form text-left">
+                <form action="/user-profile/update" method="POST" role="form text-left">
                     @csrf
                     @if($errors->any())
                     <div class="mt-3  alert alert-primary alert-dismissible fade show" role="alert">
@@ -174,7 +174,7 @@
                                 <label for="user.location" class="form-control-label">{{ __('Skills') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
 
-                                    <input class="form-control" type="text" placeholder="Skills" id="name" name="skills" value="{{($usersWithTechnicianDetails->skills)}}">
+                                    <input class="form-control" type="text" placeholder="Skills" id="name" name="skills" value="{{($usersWithTechnicianDetails->skills ?? '')}}">
                                 </div>
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('Certifications') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="Certifications" id="name" name="certifications" value="{{($usersWithTechnicianDetails->certifications)}}">
+                                    <input class="form-control" type="text" placeholder="Certifications" id="name" name="certifications" value="{{($usersWithTechnicianDetails->certifications ?? '')}}">
                                 </div>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('WorkArea') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="WorkArea" id="name" name="workarea" value="{{($usersWithTechnicianDetails->work_area)}}">
+                                    <input class="form-control" type="text" placeholder="WorkArea" id="name" name="work_area" value="{{($usersWithTechnicianDetails->work_area ?? '')}}">
                                 </div>
                             </div>
                         </div>

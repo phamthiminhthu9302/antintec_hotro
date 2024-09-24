@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
@@ -35,9 +36,9 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('billing');
 	})->name('billing');
 
-	Route::get('profile', function () {
+	Route::get('user-profile', function () {
 		return view('profile');
-	})->name('profile');
+	})->name('user-profile');
 
 	Route::get('rtl', function () {
 		return view('rtl');
@@ -64,8 +65,8 @@ Route::group(['middleware' => 'auth'], function () {
 	})->name('sign-up');
 
 	Route::get('/logout', [SessionsController::class, 'destroy']);
-	Route::get('/user-profile', [InfoUserController::class, 'create']);
-	Route::post('/user-profile', [InfoUserController::class, 'store']);
+	Route::get('/user-profile/update', [InfoUserController::class, 'create']);
+	Route::post('/user-profile/update', [InfoUserController::class, 'store']);
 	Route::get('/login', function () {
 		return view('dashboard');
 	})->name('sign-up');
