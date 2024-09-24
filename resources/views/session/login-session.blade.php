@@ -18,17 +18,18 @@
               </div>
               <div class="card-body">
                 <form role="form" method="POST" action="/session">
+                  {{-- <form id="loginForm"> --}}
                   @csrf
                   <label>Email/Phone</label>
                   <div class="mb-3">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="admin@softui.com" aria-label="Email" aria-describedby="email-addon">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email"  aria-label="Email" ari-describedby="email-addon">
                     @error('email')
                     <p class="text-danger text-xs mt-2">{{ $message }}</p>
                     @enderror
                   </div>
                   <label>Password</label>
                   <div class="mb-3">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="secret" aria-label="Password" aria-describedby="password-addon">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
                     @error('password')
                     <p class="text-danger text-xs mt-2">{{ $message }}</p>
                     @enderror
@@ -63,5 +64,31 @@
     </div>
   </section>
 </main>
+
+{{-- <script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+  
+      const formData = new FormData(this);
+  
+      fetch('/api/check-login', {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status == true) {
+            localStorage.setItem('token', data.token); 
+            window.location.href = '/dashboard'; 
+            } else {
+              alert(data);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  });
+  </script> --}}
 
 @endsection
