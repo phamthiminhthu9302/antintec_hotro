@@ -26,7 +26,7 @@ class CreateUserRequest extends FormRequest
             'password' => 'required|string|min:8',
             'password_confirmation' => 'required|string|min:8',
             'email' => 'required|email|max:100|unique:users',
-            'phone' => 'required',
+            'phone' => 'required|unique:users',
             'role' => 'required|in:customer,technician',
             'address' => 'max:255',
             'payment_method' => 'max:50|in:cash,credit_card,e_wallet'

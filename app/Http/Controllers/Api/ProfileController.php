@@ -36,7 +36,7 @@ class ProfileController extends Controller
     {
 
         $validated = $request->validate([
-            'phone' => ['string', 'max:15'],
+            'phone' => ['string', 'max:15', 'unique:users'],
             'address' => ['string', 'max:255'],
             'role' => ['string', 'max:15'],
             'payment_method' => ['string', 'max:50', 'in:cash,credit_card,e_wallet'],

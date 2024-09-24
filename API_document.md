@@ -39,7 +39,7 @@ DATA TYPE: JSON
 ***BODY***
 <pre>
 {
-    "email":"test02@gmail.com",
+    "username":"test02@gmail.com":accept either username, email,phone,
     "password": "123456789"
 }</pre>
 
