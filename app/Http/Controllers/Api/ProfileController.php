@@ -23,7 +23,7 @@ class ProfileController extends Controller
         ], 200);
     } 
 
-    public function updateProfile(Request $request){
+    public function updateInfoTech(Request $request){
 
         $useData = auth()->user();
 

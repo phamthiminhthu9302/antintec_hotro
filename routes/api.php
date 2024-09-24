@@ -26,5 +26,5 @@ Route::post("register",[AuthController::class, "register"]);
 Route::group(['middleware' => ["auth:sanctum"]], function() {
     Route::get("logout",[AuthController::class, "logout"]);
     Route::get("profile", [ProfileController::class, "profile"]);
-    Route::post("profile/update", [ProfileController::class, "updateProfile"]);
+    Route::post("profile/updateTech", [ProfileController::class, "updateInfoTech"]);
 });
