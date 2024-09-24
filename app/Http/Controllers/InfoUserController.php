@@ -7,13 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\View;
-
+use Illuminate\Support\Facades\DB;
 class InfoUserController extends Controller
 {
 
     public function create()
     {
-        return view('laravel-examples/user-profile');
+        $usersWithTechnicianDetails = User::select('users.*', 'technician_details.*')
+        ->join('technician_details', 'users.user_id', '=', 'technician_details.technician_id')
+        ->where('users.user_id', Auth::user()->user_id)
+        ->first(); // Lấy bản ghi đầu tiên
+    
+
+        return view('laravel-examples/user-profile')->with('usersWithTechnicianDetails',$usersWithTechnicianDetails);
     }
 
     public function store(Request $request)
@@ -29,7 +35,6 @@ class InfoUserController extends Controller
         
         User::where('user_id',Auth::user()->user_id)
         ->update($attributes);
-
 
         return redirect('/user-profile')->with('success','Profile updated successfully');
     }
