@@ -49,58 +49,77 @@ class AuthController extends Controller
         }
     }
 
-    public function checkLogin(Request $request){
-        try{
-            $validateUser = Validator::make($request->all(),
-            [
-                'email' => 'required|email|max:100',
-                'password' => 'required|string|min:8',
-            ]);
+        public function checkLogin(Request $request){
+            try{
+                $validateUser = Validator::make($request->all(),
+                [
+                    'email' => 'required|email|max:100',
+                    'password' => 'required|string|min:8',
+                ]);
 
-            
-            if($validateUser->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'validate error',
-                    'errors' => $validateUser->errors(),
-                ], 401);
-            }
+                
+                if($validateUser->fails()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'validate error',
+                        'errors' => $validateUser->errors(),
+                    ], 401);
+                }
 
-            $user = User::where('email', $request->email)->first();
+                $credentials = $request->only('email', 'password');
 
-            if (!$user) {
+                if(Auth::attempt($credentials)){
+                    session()->regenerate();
+                    $user = Auth::user(); 
+                    $token = $user->createToken('API Token')->plainTextToken;
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'User login successfully',
+                        'token' => $token,
+                    ], 200);
+                }
+
                 return response()->json([
                     'status' => false,
                     'message' => 'Email or password does not match our record',
                 ], 401);
+
+                // $user = User::where('email', $request->email)->first();
+
+                // if (!$user) {
+                //     return response()->json([
+                //         'status' => false,
+                //         'message' => 'Email or password does not match our record',
+                //     ], 401);
+                // }
+
+                // if (Hash::check($request->password, $user->password)) {
+                //     $token = $user->createToken('API Token')->plainTextToken;
+
+                //     return response()->json([
+                //         'status' => true,
+                //         'message' => 'User login successfully',
+                //         'token' => $token,
+                //     ], 200);
+                // }
+
             }
-
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('API Token')->plainTextToken;
-
+            catch(\Throwable $e){
                 return response()->json([
-                    'status' => true,
-                    'message' => 'User login successfully',
-                    'token' => $token,
-                ], 200);
+                    'status' => false,
+                    'message' => $e->getMessage(),
+                ], 500);
             }
-
+            
         }
-        catch(\Throwable $e){
+
+        public function logout(){
+            auth()->user()->currentAccessToken()->delete();
             return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'status' => true,
+                'message' => "User logout successfully",
+                'data' => [],
+            ], 200);
         }
-        
     }
-
-    public function logout(){
-        auth()->user()->tokens()->delete();
-        return response()->json([
-            'status' => true,
-            'message' => "User logout successfully",
-            'data' => [],
-        ], 200);
-    }
-}
