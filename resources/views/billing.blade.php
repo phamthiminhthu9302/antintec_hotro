@@ -107,7 +107,7 @@
                                           <div class="form-group">
                                               <label for="user-name" class="form-control-label">{{ __('Card holder name') }}</label>
                                               <div class="@error('user.name')border border-danger rounded-3 @enderror">
-                                                  <input class="form-control"  type="text" placeholder="Name" id="username" name="card_holder_name">
+                                                  <input class="form-control"  type="text" placeholder="Name" id="username" name="card_holder_name" value={{ old('card_holder_name') }}>
                                                       @error('name')
                                                           <p class="text-danger text-xs mt-2">{{ $message }}</p>
                                                       @enderror
@@ -118,7 +118,7 @@
                                           <div class="form-group">
                                               <label for="user-email" class="form-control-label">{{ __('Card number') }}</label>
                                               <div class="@error('email')border border-danger rounded-3 @enderror">
-                                                  <input class="form-control" type="text" placeholder="1234 5678 9112" id="user-email" name="card_number">
+                                                  <input class="form-control" type="text" placeholder="1234 5678 9112" id="user-email" name="card_number" value={{ old('card_number')}}>
                                                       @error('email')
                                                           <p class="text-danger text-xs mt-2">{{ $message }}</p>
                                                       @enderror
@@ -163,7 +163,7 @@
                                           <div class="form-group">
                                               <label for="user.location" class="form-control-label">{{ __('Billing address') }}</label>
                                               <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                                  <input class="form-control" type="text" placeholder="Address" id="name" name="billing_address">
+                                                  <input class="form-control" type="text" placeholder="Address" id="name" name="billing_address" value={{ old('billing_address')}}>
                                               </div>
                                           </div>
                                       </div>

@@ -36,10 +36,8 @@ class BillingInfoController extends Controller
         $attributes = request()->validate([
             'card_holder_name' => ['required', 'max:50'],
             'card_number' => ['required', 'max:50'],
-            'card_security_code'     => ['min:3'],
-            'billing_address' => ['max:70'],
-            
-           
+            'card_security_code'     => ['required','min:3'],
+            'billing_address' => ['required','max:70'],
         ]);
         $attributes['customer_id'] = Auth::user()->user_id;
         $attributes['card_expiration_date'] = $request->input('card_expiration_date');
@@ -73,8 +71,8 @@ class BillingInfoController extends Controller
         $attributes = request()->validate([
             'card_holder_name' => ['required', 'max:50'],
             'card_number' => ['required', 'max:50'],
-            'card_security_code'     => ['min:3'],
-            'billing_address' => ['max:70'],
+            'card_security_code'     => ['required','min:3'],
+            'billing_address' => ['required','max:70'],
             
            
         ]);
