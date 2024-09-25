@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\BillingInfo;
 
 
 class User extends Authenticatable
@@ -27,7 +28,8 @@ class User extends Authenticatable
         'password',
         'phone',
         'role',
-        'address'
+        'address',
+        'payment_method'
     ];
 
 
@@ -82,5 +84,9 @@ class User extends Authenticatable
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class, 'user_id');
+    }
+    public function billingInfo(): HasMany
+    {
+        return $this->hasMany(BillingInfo::class,'customer_id');
     }
 }

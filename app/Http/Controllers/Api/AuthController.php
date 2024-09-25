@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateUserRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -13,24 +14,25 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
+    use HttpResponses;
 
-        try{
-            $validateUser = Validator::make($request->all(),
-            [
-                'username' => 'required|string|max:50|unique:users',
-                'password' => 'required|string|min:8',
-                'email' => 'required|email|max:100|unique:users',
-                'phone' => 'required',
-                'role' => 'required|in:customer,technician',
-            ]);
 
+    public function register(CreateUserRequest $request)
+    {
+
+        try {
+            $request->validated($request->all());
+
+            if ($request->password !== $request->password_confirmation) {
+                return $this->fail("Password mismatch");
+            }
             $user = User::create([
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'email' => $request->email,
-                'phone' => $request->phone, 
+                'phone' => $request->phone,
                 'role' => $request->role,
+                'address' => $request->address,
             ]);
 
             $token = $user->createToken('API Token')->plainTextToken;
@@ -40,8 +42,7 @@ class AuthController extends Controller
                 'message' => 'User create successfully',
                 'token' => $token,
             ], 200);
-        }
-        catch(\Throwable $e){
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
@@ -49,22 +50,40 @@ class AuthController extends Controller
         }
     }
 
-        public function checkLogin(Request $request){
-            try{
-                $validateUser = Validator::make($request->all(),
-                [
-                    'email' => 'required|email|max:100',
-                    'password' => 'required|string|min:8',
-                ]);
+    public function username(): string
+    {
+        $login = request()->input('username');
 
-                
-                if($validateUser->fails()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'validate error',
-                        'errors' => $validateUser->errors(),
-                    ], 401);
-                }
+        if (is_numeric($login)) {
+            $field = 'phone';
+        } elseif (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            $field = 'email';
+        } else {
+            $field = 'username';
+        }
+
+        request()->merge([$field => $login]);
+        return $field;
+    }
+
+    public function checkLogin(Request $request)
+    {
+        try {
+            $username = $this->username();
+            $validateUser = Validator::make($request->all(),
+                [
+                    'email' => 'email|max:100',
+                    'password' => 'required|string|min:8',
+                    'username' => 'string|max:50',
+                    'phone' => 'string|max:50',
+                ]);
+            if ($validateUser->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validate error',
+                    'errors' => $validateUser->errors(),
+                ], 401);
+            }
 
                 $credentials = $request->only('email', 'password');
 
@@ -73,15 +92,11 @@ class AuthController extends Controller
                     $user = Auth::user(); 
                     $token = $user->createToken('API Token')->plainTextToken;
 
-                    // if ($request->is_request_api) {
-
-                        return response()->json([
-                            'status' => true,
-                            'message' => 'User login successfully',
-                            'token' => $token,
-                        ], 200);
-                    // }
-                    // return redirect('dashboard')->with('success_data', 'You are logged in.');
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'User login successfully',
+                        'token' => $token,
+                    ], 200);
                 }
 
                 return response()->json([
@@ -118,12 +133,14 @@ class AuthController extends Controller
             
         }
 
-        public function logout(){
-            auth()->user()->currentAccessToken()->delete();
-            return response()->json([
-                'status' => true,
-                'message' => "User logout successfully",
-                'data' => [],
-            ], 200);
-        }
+    public function logout()
+    {
+        auth()->user()->currentAccessToken()->delete();
+        return response()->json([
+            'status' => true,
+            'message' => "User logout successfully",
+            'data' => [],
+        ], 200);
+
     }
+}
