@@ -7,6 +7,8 @@ use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\BillingInfoController;
+use App\Models\BillingInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -32,9 +34,15 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('dashboard');
 	})->name('dashboard');
 
-	Route::get('billing', function () {
-		return view('billing');
-	})->name('billing');
+
+	// Route::get('billing', function () {
+	// 	return view('billing');
+	// })->name('billing');
+	Route::post('/billing', [BillingInfoController::class, 'store']);
+	Route::get('/billing', [BillingInfoController::class, 'index']);
+	Route::patch('/billing', [BillingInfoController::class, 'update']);
+	Route::delete('/billing/{id}', [BillingInfoController::class, 'destroy']);
+
 	//profile
 	Route::get('user-profile', function () {
 		return view('profile');

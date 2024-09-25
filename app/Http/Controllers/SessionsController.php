@@ -17,19 +17,19 @@ class SessionsController extends Controller
     public function store()
     {
         $attributes = request()->validate([
-            'identifier' => 'required', 
+            'email' => 'required', 
             'password' => 'required',
         ],[
-            'identifier.required' => 'Please enter your email or phone number'
+            'email.required' => 'Please enter your email or phone number'
         ]); 
-        $field = filter_var($attributes['identifier'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $field = filter_var($attributes['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
     
         
-        if (Auth::attempt([$field => $attributes['identifier'], 'password' => $attributes['password']])) {
+        if (Auth::attempt([$field => $attributes['email'], 'password' => $attributes['password']])) {
             session()->regenerate();
             return redirect('dashboard')->with(['success' => 'You are logged in.']);
         } else {
-            return back()->withErrors(['identifier' => 'Email/Phone number or password invalid.']);
+            return back()->withErrors(['email' => 'Email/Phone number or password invalid.']);
         }
     }
     
