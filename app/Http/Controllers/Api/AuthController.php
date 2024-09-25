@@ -69,7 +69,6 @@ class AuthController extends Controller
     public function checkLogin(Request $request)
     {
         try {
-            $username = $this->username();
             $validateUser = Validator::make($request->all(),
                 [
                     'email' => 'email|max:100',
