@@ -262,7 +262,7 @@
               
                           };
                     </script>
-                  <div id="overlay-form-update" style="display: block;">
+                  <div id="overlay-form-update" style="display: none;">
                     <div class="container-fluid py-4">
                       <div class="card">
                           <div class="card-header pb-0 px-3">
@@ -357,9 +357,9 @@
                                           </div>
                                       </div>
                                   </div>
-                                  
-                                      <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
-                                  </div>
+                                  <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
+                                </div>
                               </form>
               
                           </div>
