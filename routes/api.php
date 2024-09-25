@@ -38,9 +38,9 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::get("logout", [AuthController::class, "logout"]);
 
 
-Route::group(['middleware' => ["auth:sanctum"]], function() {
-    Route::get("logout",[AuthController::class, "logout"]);
-    Route::get("profile", [ProfileController::class, "profile"]);
-    Route::post("profile/updateTech", [ProfileController::class, "updateInfoTech"]);
+    Route::group(['middleware' => ["auth:sanctum"]], function() {
+        Route::get("logout",[AuthController::class, "logout"]);
+        Route::get("profile", [ProfileController::class, "profile"]);
+        Route::post("profile/updateTech", [ProfileController::class, "updateInfoTech"]);
+    });
 });
-

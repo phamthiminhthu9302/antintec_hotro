@@ -124,7 +124,7 @@ class ProfileController extends Controller
     }
     //-------------------------------------
 
-    } 
+
 
     public function updateInfoTech(Request $request){
 

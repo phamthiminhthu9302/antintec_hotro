@@ -35,7 +35,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('billing', function () {
 		return view('billing');
 	})->name('billing');
-
+	//profile
 	Route::get('user-profile', function () {
 		return view('profile');
 	})->name('user-profile');
