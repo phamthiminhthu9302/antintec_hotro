@@ -63,7 +63,6 @@ class ProfileController extends Controller
 
         $this->setAddress('address', $validated['address']);
         return $this->success(null);
-
     }
 
     public function deleteAddress(Request $request): JsonResponse
@@ -104,7 +103,7 @@ class ProfileController extends Controller
     public function updatePaymentMethod(Request $request): JsonResponse
     {
         $validated = request()->validate([
-            'request_id' => ['required', 'numeric','min:1'],
+            'request_id' => ['required', 'numeric', 'min:1'],
             'payment_method' => ['required', Rule::in('cash', 'credit_card', 'e_wallet')],
         ], ['payment_method.in' => 'Payment method must be in [cash, credit_card, e_wallet]']);
         //1. get customer id
@@ -124,13 +123,14 @@ class ProfileController extends Controller
     }
     //-------------------------------------
 
-    } 
 
-    public function updateInfoTech(Request $request){
+
+    public function updateInfoTech(Request $request)
+    {
 
         $useData = auth()->user();
 
-        if($useData->role == "technician"){
+        if ($useData->role == "technician") {
 
             $techDetail = TechnicianDetail::firstOrNew(['technician_id' => $useData->user_id]);
 
@@ -151,5 +151,4 @@ class ProfileController extends Controller
             'error' => 'User is not a technician.'
         ], 403);
     }
-
 }
