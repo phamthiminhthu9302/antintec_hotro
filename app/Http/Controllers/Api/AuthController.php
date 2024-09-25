@@ -84,7 +84,7 @@ class AuthController extends Controller
                 ], 401);
             }
 
-                $credentials = $request->only('email', 'password');
+                $credentials = $request->only($request->has('email') ? 'email' : 'phone', 'password', 'password');
 
                 if(Auth::attempt($credentials)){
                     session()->regenerate();

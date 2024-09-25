@@ -26,7 +26,6 @@ Route::post("register", [AuthController::class, "register"]);
 
 
 Route::group(['middleware' => ["auth:sanctum"]], function () {
-    Route::get("profile", [ProfileController::class, "profile"]);
     Route::put("profile", [ProfileController::class, "updateProfile"]);
     Route::get("profile/address", [ProfileController::class, "profileAddress"]);
     Route::put("profile/address", [ProfileController::class, "updateAddress"]);
