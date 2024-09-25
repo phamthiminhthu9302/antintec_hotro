@@ -77,8 +77,6 @@ class AuthController extends Controller
                     'username' => 'string|max:50',
                     'phone' => 'string|max:50',
                 ]);
-
-
             if ($validateUser->fails()) {
                 return response()->json([
                     'status' => false,
@@ -105,17 +103,13 @@ class AuthController extends Controller
                     'token' => $token,
                 ], 200);
             }
-
             return $this->fail('Password does not match', 401);
-
-
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
             ], 500);
         }
-
     }
 
     public function logout()
