@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\ProfileController;
 Route::post("check-login", [AuthController::class, "checkLogin"]);
 Route::post("register", [AuthController::class, "register"]);
 
+
 Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::get("profile", [ProfileController::class, "profile"]);
     Route::put("profile", [ProfileController::class, "updateProfile"]);
@@ -36,5 +37,10 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
 
     Route::get("logout", [AuthController::class, "logout"]);
 
-});
 
+    Route::group(['middleware' => ["auth:sanctum"]], function() {
+        Route::get("logout",[AuthController::class, "logout"]);
+        Route::get("profile", [ProfileController::class, "profile"]);
+        Route::post("profile/updateTech", [ProfileController::class, "updateInfoTech"]);
+    });
+});

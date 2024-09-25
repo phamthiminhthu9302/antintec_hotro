@@ -120,5 +120,6 @@ class AuthController extends Controller
             'message' => "User logout successfully",
             'data' => [],
         ], 200);
+
     }
 }

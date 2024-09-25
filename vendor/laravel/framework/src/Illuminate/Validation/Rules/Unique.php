@@ -22,7 +22,7 @@ class Unique implements Stringable
      *
      * @var string
      */
-    protected $idColumn = 'id';
+    protected $idColumn = 'user_id';
 
     /**
      * Ignore the given ID during the unique check.
