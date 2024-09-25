@@ -73,11 +73,15 @@ class AuthController extends Controller
                     $user = Auth::user(); 
                     $token = $user->createToken('API Token')->plainTextToken;
 
-                    return response()->json([
-                        'status' => true,
-                        'message' => 'User login successfully',
-                        'token' => $token,
-                    ], 200);
+                    // if ($request->is_request_api) {
+
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'User login successfully',
+                            'token' => $token,
+                        ], 200);
+                    // }
+                    // return redirect('dashboard')->with('success_data', 'You are logged in.');
                 }
 
                 return response()->json([
