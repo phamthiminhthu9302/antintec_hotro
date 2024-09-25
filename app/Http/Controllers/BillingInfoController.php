@@ -35,13 +35,14 @@ class BillingInfoController extends Controller
     {
         $attributes = request()->validate([
             'card_holder_name' => ['required', 'max:50'],
-            'card_number' => ['required', 'max:50'],
-            'card_security_code'     => ['required','min:3'],
+            'card_number' => ['required', 'numeric'],
+            'card_security_code'     => ['required','min:3','numeric'],
             'billing_address' => ['required','max:70'],
+            'card_expiration_date' =>['required']
         ]);
         $attributes['customer_id'] = Auth::user()->user_id;
-        $attributes['card_expiration_date'] = $request->input('card_expiration_date');
         $attributes['payment_method'] = $request->input('payment_method');
+        $attributes['card_security_code'] = bcrypt($attributes['card_security_code']);
         
         BillingInfo::create($attributes);
         return redirect('/billing')->with('success','Payment method added successfully');
@@ -70,14 +71,14 @@ class BillingInfoController extends Controller
     {
         $attributes = request()->validate([
             'card_holder_name' => ['required', 'max:50'],
-            'card_number' => ['required', 'max:50'],
-            'card_security_code'     => ['required','min:3'],
+            'card_number' => ['required', 'numeric'],
+            'card_security_code'     => ['required','min:3','numeric'],
             'billing_address' => ['required','max:70'],
-            
-           
+            'card_expiration_date' =>['required']
         ]);
-        $attributes['card_expiration_date'] = $request->input('card_expiration_date');
+        $attributes['customer_id'] = Auth::user()->user_id;
         $attributes['payment_method'] = $request->input('payment_method');
+        $attributes['card_security_code'] = bcrypt($attributes['card_security_code']);
         
         BillingInfo::where('billing_id',$request->input('billing_id'))
         ->update($attributes);

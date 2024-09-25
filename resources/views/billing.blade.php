@@ -129,7 +129,7 @@
                                         <div class="form-group">
                                             <label for="user-email" class="form-control-label">{{ __('Exp Date') }}</label>
                                             <div class="@error('email')border border-danger rounded-3 @enderror">
-                                                <input class="form-control" type="date"  id="user-email" name="card_expiration_date">
+                                                <input class="form-control" type="date"  id="user-email" name="card_expiration_date" value={{ old('card_expiration_date')}}>
                                                     @error('email')
                                                         <p class="text-danger text-xs mt-2">{{ $message }}</p>
                                                     @enderror
