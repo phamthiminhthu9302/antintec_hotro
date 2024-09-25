@@ -20,7 +20,7 @@ class BillingInfo extends Model
         'card_security_code',
         'billing_address',
     ];
-    public function User()
+    public function user()
     {
         return $this->belongsTo(User::class,'customer_id');
     }

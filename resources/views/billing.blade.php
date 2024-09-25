@@ -12,16 +12,15 @@
                 <span class="mask bg-gradient-dark"></span>
                 <div class="card-body position-relative z-index-1 p-3">
                   <i class="fas fa-wifi text-white p-2"></i>
-                  <h5 class="text-white mt-4 mb-5 pb-2">4562&nbsp;&nbsp;&nbsp;1122&nbsp;&nbsp;&nbsp;4594&nbsp;&nbsp;&nbsp;7852</h5>
-                  <div class="d-flex">
+                    <h5 class="text-white mt-4 mb-5 pb-2">{{  preg_replace('/(\d{4})(?=(\d{4})+$)/', '$1 ', auth()->user()->billingInfo()->first()->card_number) }}</h5>                  <div class="d-flex">
                     <div class="d-flex">
                       <div class="me-4">
                         <p class="text-white text-sm opacity-8 mb-0">Card Holder</p>
-                        <h6 class="text-white mb-0">Jack Peterson</h6>
+                        <h6 class="text-white mb-0">{{ auth()->user()->billingInfo()->first()->card_holder_name }}</h6>
                       </div>
                       <div>
                         <p class="text-white text-sm opacity-8 mb-0">Expires</p>
-                        <h6 class="text-white mb-0">11/22</h6>
+                        <h6 class="text-white mb-0">{{ Carbon::parse(auth()->user()->billingInfo()->first()->card_expiration_date)->format('m/y')}}</h6>
                       </div>
                     </div>
                     <div class="ms-auto w-20 d-flex align-items-end justify-content-end">
@@ -74,25 +73,298 @@
                     <h6 class="mb-0">Payment Method</h6>
                   </div>
                   <div class="col-6 text-end">
-                    <a class="btn bg-gradient-dark mb-0" href="javascript:;"><i class="fas fa-plus"></i>&nbsp;&nbsp;Add New Card</a>
+                    <a class="btn bg-gradient-dark mb-0" id="open-form-button" href="javascript:;"><i class="fas fa-plus"></i>&nbsp;&nbsp;Add New Card</a>
                   </div>
+
+                  <div id="overlay-form" style="display: none;">
+                    <div class="container-fluid py-4">
+                      <div class="card">
+                          <div class="card-header pb-0 px-3">
+                              <h6 class="mb-0">{{ __('Payment Method Information') }}</h6>
+                          </div>
+                          <div class="card-body pt-4 p-3">
+                              <form action="/billing" method="POST" role="form text-left">
+                                  @csrf
+                                  @if($errors->any())
+                                      <div class="mt-3  alert alert-primary alert-dismissible fade show" role="alert">
+                                          <span class="alert-text text-white">
+                                          {{$errors->first()}}</span>
+                                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                              <i class="fa fa-close" aria-hidden="true"></i>
+                                          </button>
+                                      </div>
+                                  @endif
+                                  @if(session('success'))
+                                      <div class="m-3  alert alert-success alert-dismissible fade show" id="alert-success" role="alert">
+                                          <span class="alert-text text-white">
+                                          {{ session('success') }}</span>
+                                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                              <i class="fa fa-close" aria-hidden="true"></i>
+                                          </button>
+                                      </div>
+                                  @endif
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user-name" class="form-control-label">{{ __('Card holder name') }}</label>
+                                              <div class="@error('user.name')border border-danger rounded-3 @enderror">
+                                                  <input class="form-control"  type="text" placeholder="Name" id="username" name="card_holder_name">
+                                                      @error('name')
+                                                          <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                      @enderror
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user-email" class="form-control-label">{{ __('Card number') }}</label>
+                                              <div class="@error('email')border border-danger rounded-3 @enderror">
+                                                  <input class="form-control" type="text" placeholder="1234 5678 9112" id="user-email" name="card_number">
+                                                      @error('email')
+                                                          <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                      @enderror
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="user-email" class="form-control-label">{{ __('Exp Date') }}</label>
+                                            <div class="@error('email')border border-danger rounded-3 @enderror">
+                                                <input class="form-control" type="date"  id="user-email" name="card_expiration_date">
+                                                    @error('email')
+                                                        <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                    @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label for="user-email" class="form-control-label">{{ __('Payment Method') }}</label>
+                                          
+                                            <select class="form-select" name="payment_method">
+                                              <option value="credit_card">Thẻ tín dụng</option>
+                                              <option value="e_wallet">Ví điện tử</option>
+                                            </select>
+                                      </div>
+                                  </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user.phone" class="form-control-label">{{ __('Card security code') }}</label>
+                                              <div class="@error('user.phone')border border-danger rounded-3 @enderror">
+                                                  <input class="form-control" type="tel" placeholder="123" id="number" name="card_security_code">
+                                                      @error('phone')
+                                                          <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                      @enderror
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user.location" class="form-control-label">{{ __('Billing address') }}</label>
+                                              <div class="@error('user.location') border border-danger rounded-3 @enderror">
+                                                  <input class="form-control" type="text" placeholder="Address" id="name" name="billing_address">
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="d-flex justify-content-end">
+                                      <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
+                                  </div>
+                              </form>
+              
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                  <script>
+                    document.getElementById("open-form-button").addEventListener("click", function() {
+                    const overlayForm = document.getElementById("overlay-form");
+                      if (overlayForm.style.display === "block") {
+                        overlayForm.style.display = "none";
+                      } else {
+                        overlayForm.style.display = "block";
+                        }
+                          });
+                    </script>
+
                 </div>
               </div>
               <div class="card-body p-3">
                 <div class="row">
-                  <div class="col-md-6 mb-md-0 mb-4">
+                  {{-- <div class="col-md-6 mb-md-0 mb-4">
                     <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row">
                       <img class="w-10 me-3 mb-0" src="../assets/img/logos/mastercard.png" alt="logo">
                       <h6 class="mb-0">****&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;7852</h6>
                       <i class="fas fa-pencil-alt ms-auto text-dark cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Card"></i>
                     </div>
-                  </div>
+                  </div> --}}
+                  @foreach ($BillingInfo as $item)
                   <div class="col-md-6">
                     <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row">
                       <img class="w-10 me-3 mb-0" src="../assets/img/logos/visa.png" alt="logo">
-                      <h6 class="mb-0">****&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;5248</h6>
-                      <i class="fas fa-pencil-alt ms-auto text-dark cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Card"></i>
+                      <h6 class="mb-0">{{ '**** **** **** ' . substr($item->card_number, -4) }}</h6>
+                      <i class="fas fa-pencil-alt ms-auto text-dark cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" 
+                      data-billing-id = "{{ $item->billing_id }}"
+                      data-card-number="{{ $item->card_number }}" data-cardholder-name="{{ $item->card_holder_name }}"
+                      data-payment-method="{{ $item->payment_method }}" data-exp-date="{{ $item->expiration_date }}"
+                      data-billing-address = "{{ $item->billing_address }}"onclick="loadForm(this)"></i>
+                         
+                        <i class="delete cursor-pointer fas fa-trash text-secondary" style="cursor: pointer" title="Delete" data-bs-toggle="tooltip" data-bs-placement="top" data-id={{ $item->billing_id }}></i>
+                        
+                        
                     </div>
+                  </div>
+                  @endforeach
+                  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                        <script>
+                            $(document).on('click', '.delete', function () {
+                                const Id = $(this).data('id');
+                                const url = `/billing/${Id}`;
+                        
+                                if (confirm('Are you sure you want to delete?')) {
+                                    $.ajax({
+                                        type: 'DELETE',
+                                        url: url,
+                                        data: {
+                                            _token: '{{ csrf_token() }}' // Include CSRF token
+                                        },
+                                        success: function (response) {
+                                            if (response.success) {
+                                                alert('Record deleted successfully!');
+                                                location.reload(); // Refresh to see changes
+                                            }
+                                        },
+                                        error: function (xhr) {
+                                            alert('Error deleting record: ' + xhr.responseText);
+                                        }
+                                    });
+                                }
+                            });
+                        </script>
+                  <script>
+                    function loadForm(element) {
+                    const cardNumber = element.getAttribute('data-card-number');
+                    const cardholderName = element.getAttribute('data-cardholder-name');
+                    const billingId = element.getAttribute('data-billing-id');
+                    const paymentMethod = element.getAttribute('data-payment-method');
+                    const billingAddress = element.getAttribute('data-billing-address');
+                    const overlayForm = document.getElementById("overlay-form-update");
+                    document.getElementById('billing_id').value = billingId;
+                    document.getElementById('card_number-update').value = cardNumber;
+                    document.getElementById('card_holder_name-update').value = cardholderName;
+                    document.getElementById('payment_method-update').value = paymentMethod;
+                    document.getElementById('billing_address-update').value = billingAddress;
+                    
+                      
+                        overlayForm.style.display = "block";
+              
+                          };
+                    </script>
+                  <div id="overlay-form-update" style="display: block;">
+                    <div class="container-fluid py-4">
+                      <div class="card">
+                          <div class="card-header pb-0 px-3">
+                              <h6 class="mb-0">{{ __('Payment Method Information') }}</h6>
+                          </div>
+                          <div class="card-body pt-4 p-3">
+                              <form action="/billing" method="POST" role="form text-left">
+                                  @csrf
+                                  <input type="hidden" name="billing_id" id="billing_id" >
+                                  @method('PATCH')
+                                  @if($errors->any())
+                                      <div class="mt-3  alert alert-primary alert-dismissible fade show" role="alert">
+                                          <span class="alert-text text-white">
+                                          {{$errors->first()}}</span>
+                                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                              <i class="fa fa-close" aria-hidden="true"></i>
+                                          </button>
+                                      </div>
+                                  @endif
+                                  @if(session('success'))
+                                      <div class="m-3  alert alert-success alert-dismissible fade show" id="alert-success" role="alert">
+                                          <span class="alert-text text-white">
+                                          {{ session('success') }}</span>
+                                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                              <i class="fa fa-close" aria-hidden="true"></i>
+                                          </button>
+                                      </div>
+                                  @endif
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user-name" class="form-control-label">{{ __('Card holder name') }}</label>
+                                              <div class="@error('user.name')border border-danger rounded-3 @enderror">
+                                                  <input class="form-control"  type="text" placeholder="Name" id="card_holder_name-update" name="card_holder_name">
+                                                      @error('name')
+                                                          <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                      @enderror
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user-email" class="form-control-label">{{ __('Card number') }}</label>
+                                              <div class="@error('email')border border-danger rounded-3 @enderror">
+                                                  <input class="form-control" type="text" placeholder="1234 5678 9112" id="card_number-update" name="card_number">
+                                                      @error('email')
+                                                          <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                      @enderror
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="user-email" class="form-control-label">{{ __('Exp Date') }}</label>
+                                            <div class="@error('email')border border-danger rounded-3 @enderror">
+                                                <input class="form-control" type="date"  id="card_expiration_date-update" name="card_expiration_date">
+                                                    @error('email')
+                                                        <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                    @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label for="user-email" class="form-control-label">{{ __('Payment Method') }}</label>
+                                          
+                                            <select class="form-select" name="payment_method" id="payment_method-update">
+                                              <option value="credit_card">Thẻ tín dụng</option>
+                                              <option value="e_wallet">Ví điện tử</option>
+                                            </select>
+                                      </div>
+                                  </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user.phone" class="form-control-label">{{ __('Card security code') }}</label>
+                                              <div class="@error('user.phone')border border-danger rounded-3 @enderror">
+                                                  <input class="form-control" type="tel" placeholder="123" id="number" name="card_security_code">
+                                                      @error('phone')
+                                                          <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                                      @enderror
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="user.location" class="form-control-label">{{ __('Billing address') }}</label>
+                                              <div class="@error('user.location') border border-danger rounded-3 @enderror">
+                                                  <input class="form-control" type="text" placeholder="Address" id="billing_address-update" name="billing_address">
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  
+                                      <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
+                                  </div>
+                              </form>
+              
+                          </div>
+                      </div>
+                  </div>
                   </div>
                 </div>
               </div>
