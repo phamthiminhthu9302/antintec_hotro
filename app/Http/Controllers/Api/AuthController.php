@@ -80,40 +80,52 @@ class AuthController extends Controller
 
 
             if ($validateUser->fails()) {
+
                 return response()->json([
                     'status' => false,
-                    'message' => 'validate error',
-                    'errors' => $validateUser->errors(),
+                    'message' => 'Username or password does not match our record',
                 ], 401);
-            }
 
             $user = User::where($username, $request->username)->first();
 
-            if (!$user) {
+                // $user = User::where('email', $request->email)->first();
+
+                // if (!$user) {
+                //     return response()->json([
+                //         'status' => false,
+                //         'message' => 'Email or password does not match our record',
+                //     ], 401);
+                // }
+
+                // if (Hash::check($request->password, $user->password)) {
+                //     $token = $user->createToken('API Token')->plainTextToken;
+
+                //     return response()->json([
+                //         'status' => true,
+                //         'message' => 'User login successfully',
+                //         'token' => $token,
+                //     ], 200);
+                // }
+
+            }
+            catch(\Throwable $e){
                 return response()->json([
                     'status' => false,
-                    'message' => 'Email or password does not match our record',
-                ], 401);
+                    'message' => $e->getMessage(),
+                ], 500);
             }
 
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('API Token')->plainTextToken;
-
-                return response()->json([
-                    'status' => true,
-                    'message' => 'User login successfully',
-                    'token' => $token,
-                ], 200);
-            }
 
             return $this->fail('Password does not match', 401);
 
 
         } catch (\Throwable $e) {
+
             return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'status' => true,
+                'message' => "User logout successfully",
+                'data' => [],
+            ], 200);
         }
 
     }
@@ -126,5 +138,5 @@ class AuthController extends Controller
             'message' => "User logout successfully",
             'data' => [],
         ], 200);
+
     }
-}
