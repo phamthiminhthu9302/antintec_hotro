@@ -163,7 +163,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('Address') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="Address" id="name" name="address" value="{{ auth()->user()->address }}">
+                                    <input class="form-control" type="text" placeholder="Address" id="address" name="address" value="{{ auth()->user()->address }}">
                                 </div>
                             </div>
                         </div>
@@ -174,7 +174,7 @@
                                 <label for="user.location" class="form-control-label">{{ __('Skills') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
 
-                                    <input class="form-control" type="text" placeholder="Skills" id="name" name="skills" value="{{($usersWithTechnicianDetails->skills ?? '')}}">
+                                    <input class="form-control" type="text" placeholder="Skills" id="skills" name="skills" value="{{($usersWithTechnicianDetails->skills ?? '')}}">
                                 </div>
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('Certifications') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="Certifications" id="name" name="certifications" value="{{($usersWithTechnicianDetails->certifications ?? '')}}">
+                                    <input class="form-control" type="text" placeholder="Certifications" id="certifications" name="certifications" value="{{($usersWithTechnicianDetails->certifications ?? '')}}">
                                 </div>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('WorkArea') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="WorkArea" id="name" name="work_area" value="{{($usersWithTechnicianDetails->work_area ?? '')}}">
+                                    <input class="form-control" type="text" placeholder="WorkArea" id="location" name="location" value="{{($usersWithTechnicianDetails->work_area ?? '')}}">
                                 </div>
                             </div>
                         </div>

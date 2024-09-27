@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateTechnicianRequest;
 
 class InfoUserController extends Controller
 {
@@ -24,39 +26,22 @@ class InfoUserController extends Controller
         return view('laravel-examples/user-profile')->with('usersWithTechnicianDetails', $usersWithTechnicianDetails);
     }
 
-    public function store()
+    public function store(UpdateUserRequest $request)
     {
-
-        $attributes = request()->validate([
-            'username' => ['required', 'max:50'],
-            'email' => ['required', 'email', 'max:50', Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id')],
-            'phone'     => ['digits_between:10,11', Rule::unique('users')->ignore(Auth::user()->phone, 'phone')],
-            'address' => ['max:70'],
-
-        ]);
-
         User::where('user_id', Auth::user()->user_id)
-            ->update($attributes);
+            ->update($request->validated());
 
-        if (Auth::user()->role === 'technician') {
-            $technicianAttributes = request()->validate([
-                'skills' => ['required', 'max:70'],
-                'certifications' => ['required', 'max:70'],
-                'work_area' => ['required', 'max:70'],
-            ]);
-
-            // Cập nhật dữ liệu cho bảng 'technician'
-            $technicianDetail = TechnicianDetail::firstOrNew(
-                ['technician_id' => Auth::user()->user_id] // Điều kiện tìm kiếm
-            );
-            
-            // Cập nhật các thuộc tính cho bản ghi (mới hoặc đã tồn tại)
-            $technicianDetail->fill($technicianAttributes);
-
-            // Lưu bản ghi
-            $technicianDetail->save();
-        }
-
+            if (Auth::user()->role === 'technician') {
+                // Xác thực dữ liệu với UpdateTechnicianRequest
+                $technicianAttributes = $request->validate((new UpdateTechnicianRequest)->rules());
+                $this->updateTechnicianDetail($technicianAttributes);
+            }
         return redirect('/user-profile/update')->with('success', 'Profile updated successfully');
+    }
+    protected function updateTechnicianDetail($technicianAttributes)
+    {
+        $technicianDetail = TechnicianDetail::firstOrNew(['technician_id' => Auth::id()]);
+        $technicianDetail->fill($technicianAttributes);
+        $technicianDetail->save();
     }
 }
