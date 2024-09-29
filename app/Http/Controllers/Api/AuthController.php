@@ -84,53 +84,32 @@ class AuthController extends Controller
                 ], 401);
             }
 
-                $credentials = $request->only($request->has('email') ? 'email' : 'phone', 'password', 'password');
+            $credentials = $request->only($request->has('email') ? 'email' : 'phone', 'password', 'password');
 
-                if(Auth::attempt($credentials)){
-                    session()->regenerate();
-                    $user = Auth::user(); 
-                    $token = $user->createToken('API Token')->plainTextToken;
+            $usernameCredentials = $request->only(['username', 'password']);
 
-                    return response()->json([
-                        'status' => true,
-                        'message' => 'User login successfully',
-                        'token' => $token,
-                    ], 200);
-                }
 
+            if (Auth::attempt($credentials) || Auth::attempt($usernameCredentials)) {
+                session()->regenerate();
+                $user = Auth::user();
+                $token = $user->createToken('API Token')->plainTextToken;
                 return response()->json([
-                    'status' => false,
-                    'message' => 'Email or password does not match our record',
-                ], 401);
-
-                // $user = User::where('email', $request->email)->first();
-
-                // if (!$user) {
-                //     return response()->json([
-                //         'status' => false,
-                //         'message' => 'Email or password does not match our record',
-                //     ], 401);
-                // }
-
-                // if (Hash::check($request->password, $user->password)) {
-                //     $token = $user->createToken('API Token')->plainTextToken;
-
-                //     return response()->json([
-                //         'status' => true,
-                //         'message' => 'User login successfully',
-                //         'token' => $token,
-                //     ], 200);
-                // }
-
+                    'status' => true,
+                    'message' => 'User login successfully',
+                    'token' => $token,
+                ], 200);
             }
-            catch(\Throwable $e){
-                return response()->json([
-                    'status' => false,
-                    'message' => $e->getMessage(),
-                ], 500);
-            }
-            
+            return response()->json([
+                'status' => false,
+                'message' => 'Email or password does not match our record',
+            ], 401);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
+    }
 
     public function logout()
     {
