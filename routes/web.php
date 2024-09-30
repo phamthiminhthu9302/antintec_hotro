@@ -75,6 +75,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile/update', [InfoUserController::class, 'create']);
 	Route::post('/user-profile/update', [InfoUserController::class, 'store']);
+	Route::get('/user-profile/location', function () {
+		return view('laravel-examples.user-location');
+	});
 	Route::get('/login', function () {
 		return view('dashboard');
 	})->name('sign-up');

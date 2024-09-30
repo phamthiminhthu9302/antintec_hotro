@@ -57,4 +57,3 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::put('/location/update', [LocationController::class, 'updateLocation']);
 });
 
-
