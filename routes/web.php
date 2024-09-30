@@ -78,6 +78,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/login', function () {
 		return view('dashboard');
 	})->name('sign-up');
+
+	Route::get('/map', function () {
+		return view('map');
+	});
 });
 
 

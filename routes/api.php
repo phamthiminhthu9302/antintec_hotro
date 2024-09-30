@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,10 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::get('/messages/{id}', [ChatController::class, 'getMessagesBySenderId'])->middleware('restrictRole:admin');
 
     Route::put('/requests/status', [RequestController::class, 'updateRequestStatus']);
+
+    Route::get('/location', [LocationController::class, 'getLocation']);
+    Route::post('/location/add', [LocationController::class, 'createLocation']);
+    Route::put('/location/update', [LocationController::class, 'updateLocation']);
 });
 
 
