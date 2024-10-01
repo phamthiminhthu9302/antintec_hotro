@@ -57,12 +57,10 @@
                                         <span class="text-secondary text-xs font-weight-bold">{{ $item->requested_at }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <a href="/requests/{{ $item->request_id }}" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit user">
-                                            <i class="fas fa-user-edit text-secondary"></i>
+                                        <a href="/requests/{{ $item->request_id }}" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="View Detail">
+                                            <i class="fas fa-info-circle text-secondary"></i>
                                         </a>
-                                        <span>
-                                            <i class="cursor-pointer fas fa-trash text-secondary"></i>
-                                        </span>
+                                        
                                     </td>
                                 </tr>
                                 @endforeach
