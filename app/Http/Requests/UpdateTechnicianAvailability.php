@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTechnicianRequest extends FormRequest
+class UpdateTechnicianAvailability extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,10 @@ class UpdateTechnicianRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'skills' => ['required', 'max:70'],
-            'certifications' => ['required', 'max:70'],
-            'work_area' => ['required','string','max:255'],
+            'available_from' => ['required', 'date_format:H:i'],
+            'available_to' => ['required', 'date_format:H:i', 'after:available_from'],
+            'day_of_week' => ['required', 'array'], // Thêm trường day_of_week
+            'day_of_week.*' => ['in:monday,tuesday,wednesday,thursday,friday,saturday,sunday'], // Xác thực từng giá trị
         ];
     }
 }
