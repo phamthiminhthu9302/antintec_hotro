@@ -544,6 +544,10 @@ class ComposerStaticInit44af905ee6d3a491d075107e62a3ab1e
         'App\\Events\\MessageSent' => __DIR__ . '/../..' . '/app/Events/MessageSent.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Api\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/AuthController.php',
+<<<<<<< HEAD
+=======
+        'App\\Http\\Controllers\\Api\\ChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ChatController.php',
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
         'App\\Http\\Controllers\\Api\\HttpResponses' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/HttpResponses.php',
         'App\\Http\\Controllers\\Api\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ProfileController.php',
         'App\\Http\\Controllers\\BillingInfoController' => __DIR__ . '/../..' . '/app/Http/Controllers/BillingInfoController.php',
@@ -567,7 +571,10 @@ class ComposerStaticInit44af905ee6d3a491d075107e62a3ab1e
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Requests\\CreateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreateUserRequest.php',
+<<<<<<< HEAD
         'App\\Listeners\\SendMessageNotification' => __DIR__ . '/../..' . '/app/Listeners/SendMessageNotification.php',
+=======
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
         'App\\Models\\BillingInfo' => __DIR__ . '/../..' . '/app/Models/BillingInfo.php',
         'App\\Models\\Location' => __DIR__ . '/../..' . '/app/Models/Location.php',
         'App\\Models\\Message' => __DIR__ . '/../..' . '/app/Models/Message.php',

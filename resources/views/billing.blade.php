@@ -12,15 +12,15 @@
                 <span class="mask bg-gradient-dark"></span>
                 <div class="card-body position-relative z-index-1 p-3">
                   <i class="fas fa-wifi text-white p-2"></i>
-                    <h5 class="text-white mt-4 mb-5 pb-2">{{  preg_replace('/(\d{4})(?=(\d{4})+$)/', '$1 ', auth()->user()->billingInfo()->first()->card_number) }}</h5>                  <div class="d-flex">
-                    <div class="d-flex">
+                    <h5 class="text-white mt-4 mb-5 pb-2">{{ auth()->user()->billingInfo()->first()?  '**** **** **** ' . substr(auth()->user()->billingInfo()->first()->card_number, -4):"No card information"}}</h5>                  <div class="d-flex">
+                    <div class="d-flex">    
                       <div class="me-4">
                         <p class="text-white text-sm opacity-8 mb-0">Card Holder</p>
-                        <h6 class="text-white mb-0">{{ auth()->user()->billingInfo()->first()->card_holder_name }}</h6>
+                        <h6 class="text-white mb-0">{{auth()->user()->billingInfo()->first()?  auth()->user()->billingInfo()->first()->card_holder_name:" " }}</h6>
                       </div>
                       <div>
                         <p class="text-white text-sm opacity-8 mb-0">Expires</p>
-                        <h6 class="text-white mb-0">{{ Carbon::parse(auth()->user()->billingInfo()->first()->card_expiration_date)->format('m/y')}}</h6>
+                        <h6 class="text-white mb-0">{{ auth()->user()->billingInfo()->first()? Carbon::parse(auth()->user()->billingInfo()->first()->card_expiration_date)->format('m/y'): ""}}</h6>
                       </div>
                     </div>
                     <div class="ms-auto w-20 d-flex align-items-end justify-content-end">

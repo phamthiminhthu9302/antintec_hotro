@@ -10,6 +10,10 @@ return array(
     'App\\Events\\MessageSent' => $baseDir . '/app/Events/MessageSent.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\Api\\AuthController' => $baseDir . '/app/Http/Controllers/Api/AuthController.php',
+<<<<<<< HEAD
+=======
+    'App\\Http\\Controllers\\Api\\ChatController' => $baseDir . '/app/Http/Controllers/Api/ChatController.php',
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
     'App\\Http\\Controllers\\Api\\HttpResponses' => $baseDir . '/app/Http/Controllers/Api/HttpResponses.php',
     'App\\Http\\Controllers\\Api\\ProfileController' => $baseDir . '/app/Http/Controllers/Api/ProfileController.php',
     'App\\Http\\Controllers\\BillingInfoController' => $baseDir . '/app/Http/Controllers/BillingInfoController.php',
@@ -33,7 +37,10 @@ return array(
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Requests\\CreateUserRequest' => $baseDir . '/app/Http/Requests/CreateUserRequest.php',
+<<<<<<< HEAD
     'App\\Listeners\\SendMessageNotification' => $baseDir . '/app/Listeners/SendMessageNotification.php',
+=======
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
     'App\\Models\\BillingInfo' => $baseDir . '/app/Models/BillingInfo.php',
     'App\\Models\\Location' => $baseDir . '/app/Models/Location.php',
     'App\\Models\\Message' => $baseDir . '/app/Models/Message.php',

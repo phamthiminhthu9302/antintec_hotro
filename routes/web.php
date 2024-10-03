@@ -9,8 +9,13 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\BillingInfoController;
+<<<<<<< HEAD
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RequestController;
+=======
+use App\Http\Controllers\RequestsController;
+use App\Http\Controllers\DashboardUserController;
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
 use App\Models\BillingInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -33,14 +38,9 @@ use App\Models\TechnicianDetail;
 Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
-	Route::get('dashboard', function () {
-		return view('dashboard');
-	})->name('dashboard');
+	Route::get('/dashboard',[DashboardUserController::class,'getServiceTypes'])->name('dashboard');
+	Route::get('/getServices', [DashboardUserController::class,'getAllServices']);
 
-
-	// Route::get('billing', function () {
-	// 	return view('billing');
-	// })->name('billing');
 	Route::post('/billing', [BillingInfoController::class, 'store']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
 	Route::patch('/billing', [BillingInfoController::class, 'update']);
@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('dashboard');
 	})->name('sign-up');
 
+<<<<<<< HEAD
 	Route::get('/chat', function () {
 		return view('chat');
 	});
@@ -93,6 +94,11 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard/update/{request_id}/{status}', [RequestController::class, 'updateStatus']);
 	Route::get('/dashboard/read/{notification_id}', [RequestController::class, 'markAsRead']);
 	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
+=======
+	Route::get('/map', function () {
+		return view('map');
+	});
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
 });
 
 
@@ -111,3 +117,11 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/login', function () {
 	return view('session/login-session');
 })->name('login');
+<<<<<<< HEAD
+=======
+
+// Route::get('/requests', function () {
+// 	return view('requests.index');
+// })->name('requests');
+Route::resource('/requests',RequestsController::class);
+>>>>>>> c1bb116653537792eae59ab5651581022f0cee85
