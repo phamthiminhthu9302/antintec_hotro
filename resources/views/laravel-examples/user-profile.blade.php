@@ -126,7 +126,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="user-name" class="form-control-label">{{ __('Username') }}</label>
+                                <label for="user-name" class="form-control-label">{{ __('Name') }}</label>
                                 <div class="@error('user.name')border border-danger rounded-3 @enderror">
                                     <input class="form-control" value="{{ auth()->user()->username }}" type="text" placeholder="Name" id="username" name="username">
                                     @error('name')
@@ -190,7 +190,32 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('WorkArea') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="WorkArea" id="location" name="location" value="{{($usersWithTechnicianDetails->work_area ?? '')}}">
+                                    <input class="form-control" type="text" placeholder="WorkArea" id="work_area" name="work_area" value="{{($usersWithTechnicianDetails->work_area ?? '')}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="user.location" class="form-control-label">{{ __('Available & Date of week') }}</label>
+                                <div class="@error('user.location') border border-danger rounded-3 @enderror">
+                                    <div class="form-group-input-time">
+                                        <select id="day_of_week" name="day_of_week[]" required>
+                                            <option value="monday" {{ in_array('Monday', $selectedDays) ? 'selected' : '' }}>Monday</option>
+                                            <option value="tuesday" {{ in_array('Tuesday', $selectedDays) ? 'selected' : '' }}>Tuesday</option>
+                                            <option value="wednesday" {{ in_array('Wednesday', $selectedDays) ? 'selected' : '' }}>Wednesday</option>
+                                            <option value="thursday" {{ in_array('Thursday', $selectedDays) ? 'selected' : '' }}>Thursday</option>
+                                            <option value="friday" {{ in_array('Friday', $selectedDays) ? 'selected' : '' }}>Friday</option>
+                                            <option value="saturday" {{ in_array('Saturday', $selectedDays) ? 'selected' : '' }}>Saturday</option>
+                                            <option value="sunday" {{ in_array('Sunday', $selectedDays) ? 'selected' : '' }}>Sunday</option>
+                                        </select>
+                                        @if ($errors->has('day_of_week'))
+                                        <span class="text-danger">{{ $errors->first('day_of_week') }}</span>
+                                        @endif
+                                        <input class="form-control" type="time" id="available_from" name="available_from" value="{{($usersWithTechnicianDetails->available_from ?? '')}}">
+                                        <input class="form-control" type="time" id="available_to" name="available_to" value="{{($usersWithTechnicianDetails->available_to ?? '')}}">
+
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
