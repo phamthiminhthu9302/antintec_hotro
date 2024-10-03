@@ -8,6 +8,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\BillingInfoController;
+use App\Http\Controllers\RequestsController;
 use App\Http\Controllers\DashboardUserController;
 use App\Models\BillingInfo;
 use Illuminate\Http\Request;
@@ -34,10 +35,6 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard',[DashboardUserController::class,'getServiceTypes'])->name('dashboard');
 	Route::get('/getServices', [DashboardUserController::class,'getAllServices']);
 
-
-	// Route::get('billing', function () {
-	// 	return view('billing');
-	// })->name('billing');
 	Route::post('/billing', [BillingInfoController::class, 'store']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
 	Route::patch('/billing', [BillingInfoController::class, 'update']);
@@ -100,3 +97,8 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/login', function () {
 	return view('session/login-session');
 })->name('login');
+
+// Route::get('/requests', function () {
+// 	return view('requests.index');
+// })->name('requests');
+Route::resource('/requests',RequestsController::class);
