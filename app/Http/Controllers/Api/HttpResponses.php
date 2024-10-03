@@ -19,4 +19,11 @@ trait HttpResponses
             'message' => $message,
         ], $code, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE);
     }
+
+    public function message($message, $code = 200){
+        return response()->json([
+            'status' => true,
+            'message' => $message,
+        ], $code, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE);
+    }
 }

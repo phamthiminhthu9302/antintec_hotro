@@ -9,6 +9,7 @@ use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\BillingInfoController;
 use App\Http\Controllers\RequestsController;
+use App\Http\Controllers\DashboardUserController;
 use App\Models\BillingInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -31,9 +32,8 @@ use App\Models\TechnicianDetail;
 Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
-	Route::get('dashboard', function () {
-		return view('dashboard');
-	})->name('dashboard');
+	Route::get('/dashboard',[DashboardUserController::class,'getServiceTypes'])->name('dashboard');
+	Route::get('/getServices', [DashboardUserController::class,'getAllServices']);
 
 	Route::post('/billing', [BillingInfoController::class, 'store']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
@@ -75,6 +75,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/login', function () {
 		return view('dashboard');
 	})->name('sign-up');
+
+	Route::get('/map', function () {
+		return view('map');
+	});
 });
 
 

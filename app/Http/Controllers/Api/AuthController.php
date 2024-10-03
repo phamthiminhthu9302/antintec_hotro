@@ -69,7 +69,6 @@ class AuthController extends Controller
     public function checkLogin(Request $request)
     {
         try {
-            $username = $this->username();
             $validateUser = Validator::make($request->all(),
                 [
                     'email' => 'email|max:100',
@@ -85,25 +84,25 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $user = User::where($username, $request->username)->first();
+            $credentials = $request->only($request->has('email') ? 'email' : 'phone', 'password', 'password');
 
-            if (!$user) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Email or password does not match our record',
-                ], 401);
-            }
+            $usernameCredentials = $request->only(['username', 'password']);
 
-            if (Hash::check($request->password, $user->password)) {
+
+            if (Auth::attempt($credentials) || Auth::attempt($usernameCredentials)) {
+                session()->regenerate();
+                $user = Auth::user();
                 $token = $user->createToken('API Token')->plainTextToken;
-
                 return response()->json([
                     'status' => true,
                     'message' => 'User login successfully',
                     'token' => $token,
                 ], 200);
             }
-            return $this->fail('Password does not match', 401);
+            return response()->json([
+                'status' => false,
+                'message' => 'Email or password does not match our record',
+            ], 401);
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
@@ -114,7 +113,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        auth()->user()->tokens()->delete();
+        auth()->user()->currentAccessToken()->delete();
         return response()->json([
             'status' => true,
             'message' => "User logout successfully",
