@@ -51,6 +51,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
     public function requestsAsCustomer(): HasMany
     {
         return $this->hasMany(Request::class, 'customer_id');
@@ -87,6 +97,6 @@ class User extends Authenticatable
     }
     public function billingInfo(): HasMany
     {
-        return $this->hasMany(BillingInfo::class,'customer_id');
+        return $this->hasMany(BillingInfo::class, 'customer_id');
     }
 }

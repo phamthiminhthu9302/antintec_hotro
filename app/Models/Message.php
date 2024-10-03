@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     protected $table = 'messages';
-
+    protected $primaryKey = 'message_id';
     protected $fillable = [
         'message_id',
         'sender_id',

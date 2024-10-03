@@ -54,4 +54,8 @@ class Request extends Model
     {
         return $this->hasOne(Payment::class, 'request_id');
     }
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'request_id');
+    }
 }
