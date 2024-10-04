@@ -92,6 +92,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
 });
 
+Route::get('/requests',[RequestController::class,'index']);
+Route::get('/requests/{id}',[RequestController::class,'show']);
 
 
 Route::group(['middleware' => 'guest'], function () {
