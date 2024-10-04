@@ -11,6 +11,7 @@
     </div>
 
     <script>
+        
         mapboxgl.accessToken = 'pk.eyJ1IjoiaG9hbmcyNjA1IiwiYSI6ImNtMW96a3lrcDE3ODcycm42ZHQ3aTA0enQifQ.nHsboTLl8JSA-aApCUpL1Q';
         var map = new mapboxgl.Map({
           container: 'map',
