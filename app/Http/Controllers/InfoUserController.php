@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateTechnicianRequest;
+use App\Models\Location;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdateTechnicianAvailability;
 
@@ -86,15 +87,21 @@ class InfoUserController extends Controller
         $technicianDetail->save();
     }
 
-    protected function updateTechnicianAvailabilityRequest($availabilityAttributes)
-    {
-        // Đảm bảo rằng day_of_week là chuỗi trước khi lưu
-        if (is_array($availabilityAttributes['day_of_week'])) {
-            $availabilityAttributes['day_of_week'] = implode(',', $availabilityAttributes['day_of_week']);
-        }
-        // dd($availabilityAttributes);
-        $technicianAvailability = TechnicianAvailability::firstOrNew(['technician_id' => Auth::id()]);
-        $technicianAvailability->fill($availabilityAttributes);
-        $technicianAvailability->save();
+    public function location(){
+        $user_id = Auth::user()->user_id;
+        return view('laravel-examples.user-location')->with("user_id", $user_id);
+    }
+
+    public function AddLocation(Request $request) {
+
+        $location = Location::updateOrCreate(
+            ['technician_id' => $request->id], 
+            [
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]
+        );
+    
+        return response()->json(['success' => true, 'message' => 'Location added successfully']);
     }
 }
