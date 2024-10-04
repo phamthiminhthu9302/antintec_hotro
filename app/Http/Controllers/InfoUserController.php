@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateTechnicianRequest;
+use App\Models\Location;
 
 class InfoUserController extends Controller
 {
@@ -44,4 +45,23 @@ class InfoUserController extends Controller
         $technicianDetail->fill($technicianAttributes);
         $technicianDetail->save();
     }
+
+    public function location(){
+        $user_id = Auth::user()->user_id;
+        return view('laravel-examples.user-location')->with("user_id", $user_id);
+    }
+
+    public function AddLocation(Request $request) {
+
+        $location = Location::updateOrCreate(
+            ['technician_id' => $request->id], 
+            [
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]
+        );
+    
+        return response()->json(['success' => true, 'message' => 'Location added successfully']);
+    }
+    
 }

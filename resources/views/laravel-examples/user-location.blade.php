@@ -24,11 +24,11 @@
         map.addControl(new mapboxgl.NavigationControl());
     
         let currentMarker = null;
+        let coordinates = null;
 
         map.on('click', function (e) {
-            const coordinates = e.lngLat;
-            console.log('Kinh độ:', coordinates.lng, 'Vĩ độ:', coordinates.lat);
-        
+            coordinates = e.lngLat;
+            
             if (currentMarker) {
                 currentMarker.remove();
             }
@@ -38,9 +38,11 @@
                 .addTo(map); 
         });
 
+        var user_id = {{ $user_id }};
+
         document.getElementById('sendLocation').addEventListener('click', function() {
-            if (currentCoordinates) {
-                fetch('/api/location/add', { 
+            if (coordinates) {
+                fetch('/location/add', { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -48,15 +50,18 @@
                         
                     },
                     body: JSON.stringify({
-                        latitude: currentCoordinates.lat,
-                        longitude: currentCoordinates.lng
+                        id: user_id,
+                        latitude: coordinates.lat,
+                        longitude: coordinates.lng
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
+                    if (data.success) {
+                        window.location.href = '/user-profile/update'; 
+                    }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error('Error:', error);
                 });
             } 
