@@ -92,4 +92,26 @@ class RequestController extends Controller
 
         return response()->json($notification);
     }
+    
+    //Xem lịch sử sử dụng dịch vụ
+    public function index()
+    {
+        switch(Auth::user()->role){
+            case 'customer':
+                $Requests = \App\Models\Request::where('customer_id',Auth::user()->user_id)->get();
+                break;
+            case 'technician':
+                $Requests = \App\Models\Request::where('technician_id',Auth::user()->user_id)->get();
+                break;
+        }
+        
+            return view('requests.index',[
+            'requests'=>$Requests]);
+    }
+    public function show(string $id)
+    {
+        $Requests = \App\Models\Request::find($id);
+        return view('requests.show',[
+            'requests'=>$Requests]);
+    }
 }

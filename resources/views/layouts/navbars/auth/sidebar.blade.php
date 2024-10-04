@@ -123,7 +123,7 @@
             </svg>
           </div>
 
-          <span class="nav-link-text ms-1">Requests</span>
+          <span class="nav-link-text ms-1">Requests History</span>
 
         </a>
       </li>
