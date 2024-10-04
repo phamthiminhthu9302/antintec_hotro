@@ -1,10 +1,6 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<<<<<<< HEAD
-<button onclick="test(1,'cancelled')">Click me</button>
-@endsection
-=======
 <div class="google-map-customer">
   <div class="form-container" id="formcontainer">
     <div id="input-container">
@@ -827,4 +823,3 @@
   // }
 </script>
 @endpush
->>>>>>> c1bb116653537792eae59ab5651581022f0cee85
