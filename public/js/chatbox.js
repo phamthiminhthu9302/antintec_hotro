@@ -1,12 +1,4 @@
-Pusher.logToConsole = true;
-var pusher = new Pusher('f833ed006b07e2964bfd', {
-  cluster: 'ap1'
-});
-// Hàm đóng hộp thoại chat
-function closeChatBox() {
-  const chatBox = document.getElementById('chatBox');
-  chatBox.classList.remove('show');
-}
+
 function formatTime(timestamp) {
   const now = new Date();
   const messageTime = new Date(timestamp);
@@ -28,16 +20,26 @@ function formatTime(timestamp) {
     return `${day}/${month}/${year} lúc ${messageTime.getHours()}:${messageTime.getMinutes().toString().padStart(2, '0')}`;
   }
 }
+Pusher.logToConsole = true;
+var pusher = new Pusher('f833ed006b07e2964bfd', {
+  cluster: 'ap1'
+});
+// Hàm đóng hộp thoại chat
+function closeChatBox() {
+  const chatBox = document.getElementById('chatBox');
+  chatBox.classList.remove('show');
+}
+var open = false;
 function MessageReceiver(request_id, receiver_id) {
   if (document.getElementById("message-`" + `${request_id}` + "`")) {
     document.getElementById("message-`" + `${request_id}` + "`").classList.remove('notification-badge');
   }
-  var user = document.getElementById('user_curent');
   const chat = document.getElementById('chatBox');
   chat.classList.add('show');
   axios.get(`/dashboard/get/${request_id}/${receiver_id}`)
     .then(response => {
       const messages = response.data['messages'];
+
       const chatBox = document.getElementById('chat-box');
       chatBox.innerHTML = '';
       document.getElementById('receiverName').textContent = response.data['user_name'].username;
@@ -52,17 +54,24 @@ function MessageReceiver(request_id, receiver_id) {
       // Tạo input để nhập tin nhắn
       const messageInputGroup = document.createElement('div');
       messageInputGroup.classList.add('input-group');
-      messageInputGroup.style.marginTop = '4px';
+      messageInputGroup.style.marginTop = '-22px';
       const messageInput = document.createElement('input');
       messageInput.setAttribute('type', 'text');
       messageInput.setAttribute('id', 'message');
       messageInput.classList.add('form-control');
       messageInput.setAttribute('placeholder', 'Nhập tin nhắn...');
       messageInput.setAttribute('required', true);
+      messageInput.style.maxWidth = '80%';
+      messageInput.style.height = '35px';
       const sendButton = document.createElement('button');
       sendButton.classList.add('btn-primary');
       sendButton.setAttribute('type', 'submit');
       sendButton.textContent = 'Gửi';
+      sendButton.style.borderRadius = '0.5rem';
+      sendButton.style.marginLeft = 'auto';
+      sendButton.style.marginTop = '-0.5px';
+      sendButton.style.maxWidth = '20%';
+      sendButton.style.height = '36px';
       messageInputGroup.appendChild(messageInput);
       messageInputGroup.appendChild(sendButton);
       const chatForm = document.getElementById('chat-form');
@@ -125,6 +134,11 @@ function MessageReceiver(request_id, receiver_id) {
             });
         }
       });
+      if (settingsIcon.textContent != 0) {
+
+        settingsIcon.textContent = Number(settingsIcon.textContent) - count_is_seen;
+      }
+      console.log('mess:' + Number(settingsIcon.textContent));
       const lastMessage = chatBox.lastElementChild;
       if (lastMessage) {
         if (receiver_ids != user) {
@@ -137,9 +151,7 @@ function MessageReceiver(request_id, receiver_id) {
           document.getElementById('seenImage').style.display = 'block';
         }
       }
-      if (settingsIcon.textContent != 0) {
-        settingsIcon.textContent = Number(settingsIcon.textContent) - count_is_seen;
-      }
+
       chatBox.scrollTop = chatBox.scrollHeight;
     })
     .catch(error => {
@@ -152,9 +164,10 @@ if (document.getElementById('chat-form')) {
     let request_id = document.getElementById('request_id').value;
     let receiver_id = document.getElementById('receiver_id').value;
     let message = document.getElementById('message').value;
+    document.getElementById('receiverName').textContent;
     axios.post(`/dashboard/send/${request_id}/${receiver_id}/${message}`)
       .then(response => {
-        document.getElementById('message').value = ''; // Xóa nội dung ô nhập
+        document.getElementById('message').value = '';
       })
       .catch(error => {
         console.log(error);
@@ -165,11 +178,23 @@ if (!channel) {
   var channel = pusher.subscribe('my-channel');
   channel.bind('my-event', function (data) {
     var user = document.getElementById('user_curent');
-    if (Number(user.textContent) != data.message.sender_id) {
-      MessageReceiver(data.message.request_id, data.message.sender_id);
-    } else {
-      MessageReceiver(data.message.request_id, data.message.receiver_id);
+    const chatBox = document.getElementById('chatBox');
+    // Kiểm tra nếu chatbox đang hiển thị
+    if (chatBox.classList.contains('show')) {
+      const receiverId = Number(document.getElementById('receiver_id').value);
+      const requestId = Number(document.getElementById('request_id').value);
+      if (
+        (data.message.request_id === requestId) &&
+        (data.message.sender_id === receiverId || data.message.receiver_id === receiverId)
+      ) {
+        if (Number(user.textContent) != data.message.sender_id) {
+          MessageReceiver(data.message.request_id, data.message.sender_id);
+        } else {
+          MessageReceiver(data.message.request_id, data.message.receiver_id);
+        }
+      }
     }
+
   });
 }
 dayjs.extend(window.dayjs_plugin_relativeTime);
@@ -178,19 +203,21 @@ channel.bind('my-event-people', function (data) {
   const results = data.results;
   const messages = data.message;
   const messageCount = data.count;
-  var results_c, message_c, messageCount_c;
+  var results_c, message_c, count_request;
   var user = document.getElementById('user_curent');
+  const chatBox = document.getElementById('chatBox');
   if (Number(user.textContent) != results[0].user_c) {
     axios.get(`/dashboard/usercurrent`)
       .then(response => {
         results_c = response.data['results'];
         message_c = response.data['message'];
         messageCount_c = response.data['count'];
-        document.getElementById('messageCount').textContent = messageCount_c;
+        count_request = response.data['count_request'];
+        document.getElementById('messageCount').textContent = 0;
         const settingsDropdown = document.getElementById('settings');
         settingsDropdown.innerHTML = '';
         if (results_c.length > 0) {
-          results_c.forEach(function (result) {
+          results_c.forEach(function (result, index) {
             const listItem = document.createElement('li');
             listItem.classList.add('mb-2');
             const linkItem = document.createElement('a');
@@ -217,14 +244,47 @@ channel.bind('my-event-people', function (data) {
             let messageContent = 'Giờ đây, các bạn có thể nhắn tin cho nhau.';
             let m = '';
             if (message_c.length > 0) {
-              message_c.forEach(function (message) {
-                if (message_c.length < results_c.length && message.request_id != result.request_id) {
-                  messageParagraph.innerHTML = messageContent;
+              const currentMessage = message_c.find(msg => msg.request_id == result.request_id);
+              if (currentMessage) {
+                if (chatBox.classList.contains('show')) {
+                  const current = message_c.find(msg => msg.sender_id == result.receiver_id);
+                  if (current) {
+                    if (message_c.length < results_c.length) {
+                      document.getElementById('messageCount').textContent = 0;
+                    } else {
+                      if (result.receiver_name == document.getElementById('receiverName').textContent) {
+                        count_request[index].count = 0;
+                      } else {
+                        document.getElementById('messageCount').textContent = Number(document.getElementById('messageCount').textContent) + count_request[index].count;
+                      }
+                    }
+                  }
+                } else {
+                  const countCurrent = count_request.find(c => c.request_id == currentMessage.request_id)?.count || 0;
+                  document.getElementById('messageCount').textContent =
+                    Number(document.getElementById('messageCount').textContent) + countCurrent;
                 }
-                if (message.request_id == result.request_id) {
+              }
+
+              message_c.forEach(function (message) {
+                if (message.request_id != result.request_id) {
+                  if (message_c.length < results_c.length) {
+                    messageParagraph.innerHTML = messageContent;
+                  } else {
+                    if (!message.is_seen) {
+                      m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                    }
+                  }
+                } else {
                   m = `${message.message}. ${formatTime(message.created_at)}`;
                   if (!message.is_seen && message.sender_id == result.receiver_id) {
-                    m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                    if (!chatBox.classList.contains('show')) {
+                      m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                    } else {
+                      if (result.receiver_name != document.getElementById('receiverName').textContent) {
+                        m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                      }
+                    }
                   }
                   messageParagraph.innerHTML = m;
                 }
@@ -239,7 +299,6 @@ channel.bind('my-event-people', function (data) {
             linkItem.appendChild(divContainer);
             listItem.appendChild(linkItem);
             settingsDropdown.appendChild(listItem);
-
           });
         } else {
           // Trường hợp không có dữ liệu
@@ -258,11 +317,11 @@ channel.bind('my-event-people', function (data) {
       });
 
   } else {
-    // document.getElementById('messageCount').textContent = messageCount;
+    document.getElementById('messageCount').textContent = 0;
     const settingsDropdown = document.getElementById('settings');
     settingsDropdown.innerHTML = '';
     if (results.length > 0) {
-      results.forEach(function (result) {
+      results.forEach(function (result, index) {
         const listItem = document.createElement('li');
         listItem.classList.add('mb-2');
         const linkItem = document.createElement('a');
@@ -288,20 +347,59 @@ channel.bind('my-event-people', function (data) {
         messageParagraph.classList.add('text-xs', 'text-secondary', 'mb-0');
         let messageContent = 'Giờ đây, các bạn có thể nhắn tin cho nhau.';
         let m = '';
-        if (data.message.length > 0) {
-          messages.forEach(function (message) {
-            if (data.message.length < data.results.length && message.request_id != result.request_id) {
-              messageParagraph.innerHTML = messageContent;
+
+        if (messages.length > 0) {
+          const currentMessage = messages.find(msg => msg.request_id == result.request_id);
+          if (currentMessage) {
+
+            if (chatBox.classList.contains('show')) {
+              const current = messages.find(msg => msg.sender_id == result.receiver_id);
+              if (current) {
+                if (messages.length < results.length) {
+                  document.getElementById('messageCount').textContent = 0;
+                } else {
+                  if (result.receiver_name == document.getElementById('receiverName').textContent) {
+                    count_request[index].count = 0;
+                  } else {
+                    document.getElementById('messageCount').textContent = Number(document.getElementById('messageCount').textContent) + messageCount[index].count;
+                  }
+                }
+              }
+              else {
+                if (result.receiver_name != document.getElementById('receiverName').textContent) {
+                  document.getElementById('messageCount').textContent = Number(document.getElementById('messageCount').textContent) + messageCount[index].count;
+                }
+              }
+            } else {
+              // Trường hợp chatBox không hiển thị (không có class 'show')
+              const countCurrent = messageCount.find(c => c.request_id == currentMessage.request_id)?.count || 0;
+              document.getElementById('messageCount').textContent = Number(document.getElementById('messageCount').textContent) + countCurrent;
             }
-            if (message.request_id == result.request_id) {
+
+          }
+          messages.forEach(function (message) {
+            if (message.request_id != result.request_id) {
+              if (messages.length < results.length) {
+                messageParagraph.innerHTML = messageContent;
+              } else {
+                if (!message.is_seen) {
+                  m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                }
+              }
+            } else {
               m = `${message.message}. ${formatTime(message.created_at)}`;
-              if (!message.is_seen && Number(user.textContent) == result.receiver_id) {
-                m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+              if (!message.is_seen && Number(user.textContent) != result.receiver_id) {
+                if (!chatBox.classList.contains('show')) {
+                  m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                } else {
+                  if (result.receiver_name != document.getElementById('receiverName').textContent) {
+                    m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
+                  }
+                }
               }
               messageParagraph.innerHTML = m;
             }
           });
-
         } else {
           messageParagraph.innerHTML = messageContent;
         }
