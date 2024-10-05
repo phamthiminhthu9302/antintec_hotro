@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\ServicesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,9 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::get('/location', [LocationController::class, 'getLocation']);
     Route::post('/location/add', [LocationController::class, 'createLocation']);
     Route::put('/location/update', [LocationController::class, 'updateLocation']);
-});
 
+    Route::post('services/search', [ServicesController::class, 'searchServices']);
+    Route::post('services/store', [ServicesController::class, 'store']);
+    Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
+});
 

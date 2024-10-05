@@ -14,7 +14,7 @@ class BillingInfoController extends Controller
      */
     public function index()
     {
-        // $BillingInfo = BillingInfo::where('customer_id',Auth::user()->user_id)->get();
+        $BillingInfo = BillingInfo::where('customer_id',Auth::user()->user_id)->get();
         return view('billing',[
             'BillingInfo'=> $BillingInfo
         ]);

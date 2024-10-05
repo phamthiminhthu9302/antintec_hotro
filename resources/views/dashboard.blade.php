@@ -7,16 +7,6 @@
       <h3 class="form-title"> Tìm dịch vụ</h3>
       <form id="service-form">
         <div class="form-group">
-          <label for="price">Giá:</label>
-          <select id="price" name="price" onchange="filterPrices()" required>
-            <option value="">Chọn giá</option>
-            @foreach($servicePrices as $servicePrice)
-            <option value="{{ $servicePrice->price }}">{{ number_format($servicePrice->price, 0, ',', '.') }}</option>
-            @endforeach
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="service-type">Loại dịch vụ:</label>
           <select id="service-type" name="service_type" onchange="filterServices()" required>
             <option value="">Chọn dịch vụ</option>
@@ -25,7 +15,15 @@
             @endforeach
           </select>
         </div>
-
+        <div class="form-group">
+          <label for="price">Giá:</label>
+          <select id="price" name="price" onchange="filterPrices()" required>
+            <option value="">Chọn giá</option>
+            @foreach($servicePrices as $servicePrice)
+            <option value="{{ $servicePrice->price }}">{{ number_format($servicePrice->price, 0, ',', '.') }}</option>
+            @endforeach
+          </select>
+        </div>
         <button type="submit">Tìm kiếm</button>
         <hr>
         <ul id="service-list"></ul>
