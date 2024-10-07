@@ -93,7 +93,7 @@ class ShareDataViewServiceProvider extends ServiceProvider
                         'sender_id' => $message->sender_id,
                         'request_id' => $message->request_id,
                         'is_seen' => $message->is_seen,
-                        'message' => $message->message,
+                        'message' => urldecode($message->message),
                         'created_at' => $message->created_at,
                     ];
                 }

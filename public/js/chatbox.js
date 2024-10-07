@@ -24,12 +24,10 @@ Pusher.logToConsole = true;
 var pusher = new Pusher('f833ed006b07e2964bfd', {
   cluster: 'ap1'
 });
-// Hàm đóng hộp thoại chat
 function closeChatBox() {
   const chatBox = document.getElementById('chatBox');
   chatBox.classList.remove('show');
 }
-var open = false;
 function MessageReceiver(request_id, receiver_id) {
   if (document.getElementById("message-`" + `${request_id}` + "`")) {
     document.getElementById("message-`" + `${request_id}` + "`").classList.remove('notification-badge');
@@ -39,7 +37,6 @@ function MessageReceiver(request_id, receiver_id) {
   axios.get(`/dashboard/get/${request_id}/${receiver_id}`)
     .then(response => {
       const messages = response.data['messages'];
-
       const chatBox = document.getElementById('chat-box');
       chatBox.innerHTML = '';
       document.getElementById('receiverName').textContent = response.data['user_name'].username;
@@ -51,7 +48,6 @@ function MessageReceiver(request_id, receiver_id) {
       receiverIdInput.setAttribute('type', 'hidden');
       receiverIdInput.setAttribute('id', 'receiver_id');
       receiverIdInput.setAttribute('value', receiver_id);
-      // Tạo input để nhập tin nhắn
       const messageInputGroup = document.createElement('div');
       messageInputGroup.classList.add('input-group');
       messageInputGroup.style.marginTop = '-22px';
@@ -94,7 +90,7 @@ function MessageReceiver(request_id, receiver_id) {
           timeElement.classList.add('message-time');
           timeElement.textContent = messageTime;
           const textElement = document.createElement('span');
-          textElement.textContent = message.message;
+          textElement.textContent = decodeURIComponent(message.message);
           messageElement.appendChild(timeElement);
           messageElement.appendChild(textElement);
           chatBox.appendChild(messageElement);
@@ -113,7 +109,7 @@ function MessageReceiver(request_id, receiver_id) {
           timeElement.classList.add('message-time');
           timeElement.textContent = messageTime;
           const textElement = document.createElement('span');
-          textElement.textContent = message.message;
+          textElement.textContent = decodeURIComponent(message.message);
           messageContent.appendChild(timeElement);
           messageContent.appendChild(textElement);
           messageElement.appendChild(profileImgContainer);
@@ -163,9 +159,11 @@ if (document.getElementById('chat-form')) {
     e.preventDefault();
     let request_id = document.getElementById('request_id').value;
     let receiver_id = document.getElementById('receiver_id').value;
-    let message = document.getElementById('message').value;
-    document.getElementById('receiverName').textContent;
-    axios.post(`/dashboard/send/${request_id}/${receiver_id}/${message}`)
+    let message = encodeURIComponent(document.getElementById('message').value);
+    axios.post(`/dashboard/send/${request_id}`, {
+      receiver_id: receiver_id,
+      message: message
+    })
       .then(response => {
         document.getElementById('message').value = '';
       })
@@ -179,7 +177,6 @@ if (!channel) {
   channel.bind('my-event', function (data) {
     var user = document.getElementById('user_curent');
     const chatBox = document.getElementById('chatBox');
-    // Kiểm tra nếu chatbox đang hiển thị
     if (chatBox.classList.contains('show')) {
       const receiverId = Number(document.getElementById('receiver_id').value);
       const requestId = Number(document.getElementById('request_id').value);
@@ -276,7 +273,7 @@ channel.bind('my-event-people', function (data) {
                     }
                   }
                 } else {
-                  m = `${message.message}. ${formatTime(message.created_at)}`;
+                  m = `${decodeURIComponent(message.message)}. ${formatTime(message.created_at)}`;
                   if (!message.is_seen && message.sender_id == result.receiver_id) {
                     if (!chatBox.classList.contains('show')) {
                       m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
@@ -301,7 +298,6 @@ channel.bind('my-event-people', function (data) {
             settingsDropdown.appendChild(listItem);
           });
         } else {
-          // Trường hợp không có dữ liệu
           const listItem = document.createElement('li');
           listItem.classList.add('mb-2');
           const linkItem = document.createElement('a');
@@ -371,7 +367,6 @@ channel.bind('my-event-people', function (data) {
                 }
               }
             } else {
-              // Trường hợp chatBox không hiển thị (không có class 'show')
               const countCurrent = messageCount.find(c => c.request_id == currentMessage.request_id)?.count || 0;
               document.getElementById('messageCount').textContent = Number(document.getElementById('messageCount').textContent) + countCurrent;
             }
@@ -387,12 +382,12 @@ channel.bind('my-event-people', function (data) {
                 }
               }
             } else {
-              m = `${message.message}. ${formatTime(message.created_at)}`;
+              m = `${decodeURIComponent(message.message)}. ${formatTime(message.created_at)}`;
               if (!message.is_seen && Number(user.textContent) != result.receiver_id) {
                 if (!chatBox.classList.contains('show')) {
                   m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
                 } else {
-                  if (result.receiver_name != document.getElementById('receiverName').textContent) {
+                  if (message.receiver_id == result.sender_id) {
                     m += '<span class="notification-badge" id="message-`' + `${message.request_id}` + '`"></span>';
                   }
                 }

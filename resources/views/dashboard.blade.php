@@ -1,6 +1,7 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+<button onclick="test(1,'completed')">Test Thông báo</button>
 <div class="google-map-customer">
   <div class="form-container" id="formcontainer">
     <div id="input-container">

@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\BillingInfoController;
 use App\Http\Controllers\RequestsController;
@@ -35,8 +36,8 @@ use App\Models\TechnicianDetail;
 Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
-	Route::get('/dashboard',[DashboardUserController::class,'getServiceTypes'])->name('dashboard');
-	Route::get('/getServices', [DashboardUserController::class,'getAllServices']);
+	Route::get('/dashboard', [DashboardUserController::class, 'getServiceTypes'])->name('dashboard');
+	Route::get('/getServices', [DashboardUserController::class, 'getAllServices']);
 
 	Route::post('/billing', [BillingInfoController::class, 'store']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
@@ -56,9 +57,9 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('laravel-examples/user-management');
 	})->name('user-management');
 
-	Route::get('tables', function () {
-		return view('tables');
-	})->name('tables');
+	// Route::get('tables', function () {
+	// 	return view('tables');
+	// })->name('tables');
 
 	Route::get('virtual-reality', function () {
 		return view('virtual-reality');
@@ -84,20 +85,18 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/chat', function () {
 		return view('chat');
 	});
-	// Route xử lý gửi tin nhắn
-	Route:
-	Route::match(['get', 'post'], '/dashboard/send/{request_id}/{receiver_id}/{message}', [ChatController::class, 'sendMessage'])->name('chat.send');
+	Route::match(['get', 'post'], '/dashboard/send/{request_id}', [ChatController::class, 'sendMessage'])->name('chat.send');
 	Route::get('/dashboard/get/{request_id}/{receiver_id}', [ChatController::class, 'getMessages'])->name('chat.messages');
 	Route::match(['get', 'post'], '/dashboard/seen/{messageIds}', [ChatController::class, 'markAsSeen'])->name('markAsSeen');
+	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
 	Route::get('/dashboard/update/{request_id}/{status}', [RequestController::class, 'updateStatus']);
 	Route::get('/dashboard/read/{notification_id}', [RequestController::class, 'markAsRead']);
-	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
+	Route::get('/review/{requestId}', [ReviewController::class, 'create'])->name('reviews.create');
+	Route::post('/review/{requestId}', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
-Route::get('/requests',[RequestController::class,'index']);
-Route::get('/requests/{id}',[RequestController::class,'show']);
-
-
+Route::get('/requests', [RequestController::class, 'index']);
+Route::get('/requests/{id}', [RequestController::class, 'show']);
 Route::group(['middleware' => 'guest'], function () {
 	Route::get('/register', [RegisterController::class, 'create']);
 	Route::post('/register', [RegisterController::class, 'store']);
