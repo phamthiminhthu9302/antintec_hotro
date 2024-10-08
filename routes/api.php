@@ -61,6 +61,6 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::post('services/search', [ServicesController::class, 'searchServices']);
     Route::post('services/store', [ServicesController::class, 'store']);
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
-});
 
-Route::apiResource('reviews',ReviewController::class);
+    Route::apiResource('reviews',ReviewController::class);
+});
