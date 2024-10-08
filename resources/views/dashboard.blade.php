@@ -8,7 +8,7 @@
       <form id="service-form">
         <div class="form-group">
           <label for="service-type">Loại dịch vụ:</label>
-          <select id="service-type" name="service_type" onchange="filterServices()" required>
+          <select id="service-type" name="service_type" onchange="filterFormServices()">
             <option value="">Chọn dịch vụ</option>
             @foreach($serviceTypes as $serviceType)
             <option value="{{ $serviceType->service_types_id }}">{{ $serviceType->service_types_name }}</option>
@@ -17,7 +17,7 @@
         </div>
         <div class="form-group">
           <label for="price">Giá:</label>
-          <select id="price" name="price" onchange="filterPrices()" required>
+          <select id="price" name="price" disabled>
             <option value="">Chọn giá</option>
             @foreach($servicePrices as $servicePrice)
             <option value="{{ $servicePrice->price }}">{{ number_format($servicePrice->price, 0, ',', '.') }}</option>
