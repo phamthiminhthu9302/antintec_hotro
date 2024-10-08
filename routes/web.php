@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard',[DashboardUserController::class,'getServiceTypes'])->name('dashboard');
 	Route::get('/getServices', [DashboardUserController::class,'getAllServices']);
 
-	Route::post('/billing', [BillingInfoController::class, 'store']);
+	Route::post('/billing', [BillingInfoController::class, 'insertUpdate']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
 	Route::patch('/billing', [BillingInfoController::class, 'update']);
 	Route::delete('/billing/{id}', [BillingInfoController::class, 'destroy']);

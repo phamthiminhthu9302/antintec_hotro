@@ -271,7 +271,6 @@
                               <form action="/billing" method="POST" role="form text-left">
                                   @csrf
                                   <input type="hidden" name="billing_id" id="billing_id" >
-                                  @method('PATCH')
                                   <div class="row">
                                       <div class="col-md-6">
                                           <div class="form-group">
