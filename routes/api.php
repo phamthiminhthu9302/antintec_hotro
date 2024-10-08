@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ServicesController;
+use App\Http\Controllers\api\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,5 +61,6 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::post('services/search', [ServicesController::class, 'searchServices']);
     Route::post('services/store', [ServicesController::class, 'store']);
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
-});
 
+    Route::apiResource('reviews',ReviewController::class);
+});
