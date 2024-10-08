@@ -90,7 +90,7 @@ function handleEventItemService(data) {
                 const lat = parseFloat(listItem.getAttribute("data-lat")); 
                 const lon = parseFloat(listItem.getAttribute("data-lon"));
                 // Cập nhật vị trí bản đồ mà không khởi tạo lại
-                map.setView([lat, lon], 13);
+                map.setView([lat, lon], 19);
 
                 // Tìm dịch vụ được chọn từ danh sách data dựa trên lat và lon
                 const selectedService = data.find((service) => {
@@ -146,5 +146,7 @@ function filterServices() {
 }
 
 document.getElementById("service-form").addEventListener("submit", function (event) {
-    event.preventDefault(); 
+    event.preventDefault();
+    filterServices();
+    filterPrices();  
 });

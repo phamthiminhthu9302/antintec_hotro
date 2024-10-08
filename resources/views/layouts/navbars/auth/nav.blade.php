@@ -256,13 +256,12 @@
         </div>
     </div>
 </nav>
-<div id="user_curent" style="display: none;">{{$user}}</div>
 <div id="chatBox" class="chat-box">
     <div class="chat-header">
         <img src="../assets/img/team-2.jpg" class="avatar avatar-sm  me-3 " style="  margin-right: auto;    margin-left: 5px;" />
         <span id="receiverName"></span>
 
-        <button class="close-btn" onclick="closeChatBox()">×</button>
+        <p class="close-btn" onclick="closeChatBox()">×</p>
     </div>
     <div id="chat-box" style="height: 300px;">
     </div>
@@ -310,6 +309,7 @@
         font-size: 30px;
         cursor: pointer;
         margin-left: auto;
+        margin-right: 5px;
     }
 
     #chat-box {
@@ -327,6 +327,6 @@
 <!-- End Navbar -->
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <script src="../js/chatbox.js"></script>

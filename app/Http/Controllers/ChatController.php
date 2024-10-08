@@ -39,6 +39,19 @@ class ChatController extends Controller
                 'created_at' => $message->created_at,
             ];
         }
+        $count_request = [];
+        foreach ($new as $r) {
+
+            $message =  Message::where('request_id', $r->request_id)->where('receiver_id', $user)
+                ->where('is_seen', 'false')
+                ->selectRaw('count(is_seen)as count')->get();
+            $count_request[] =
+                [
+                    'request_id' => $r->request_id,
+                    'count' => $message[0]->count
+                ];
+        }
+
         $count = 0;
         $messageis_seen =  Message::where('receiver_id', $user)
             ->select('is_seen')
@@ -48,6 +61,7 @@ class ChatController extends Controller
                 $count++;
             }
         }
+
         $results = [];
         $role = User::where('user_id', $user)->select('role')->first();
         if ($role->role == 'customer') {
@@ -94,7 +108,8 @@ class ChatController extends Controller
                 ];
             }
         }
-        return  response()->json(['user' => $user, 'results' => $results, 'message' => $people, 'count' => $count]);
+
+        return  response()->json(['count_request' => $count_request, 'results' => $results, 'message' => $people, 'count' => $count]);
     }
     public function getMessages($request_id, $receiver_id)
     {
@@ -145,7 +160,19 @@ class ChatController extends Controller
                 'created_at' => $message->created_at,
             ];
         }
-        $count = 1;
+        $count_request = [];
+        foreach ($new as $r) {
+
+            $message =  Message::where('request_id', $r->request_id)->where('receiver_id', $user)
+                ->where('is_seen', 'false')
+                ->selectRaw('count(is_seen)as count')->get();
+            $count_request[] =
+                [
+                    'request_id' => $r->request_id,
+                    'count' => $message[0]->count
+                ];
+        }
+
         $results = [];
         $role = User::where('user_id', $user)->select('role')->first();
         if ($role->role == 'customer') {
@@ -192,7 +219,7 @@ class ChatController extends Controller
                 ];
             }
         }
-        event(new MessagePeople($results, $people, $count));
+        event(new MessagePeople($results, $people, $count_request));
         return ['status' => 'Message Sent!'];
     }
 
