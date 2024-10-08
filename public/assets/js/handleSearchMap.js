@@ -88,7 +88,12 @@ function getLocation() {
                     const userLat = position.coords.latitude;
                     const userLon = position.coords.longitude;
                     console.log("User's location: ", userLat, userLon);
-
+                    var circle = L.circle([userLat, userLon], {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.5,
+                        radius: 10
+                      }).addTo(map)
                     // displayServices(services, userLat, userLon);
                     resolve({ userLat, userLon });
                 },
@@ -249,7 +254,7 @@ function filterFormServices() {
 
     // Kiểm tra rằng filteredServices không phải là một mảng rỗng
     if (filteredServices.length > 0) {
-        console.log(">>>>check filteredServices: ", filteredServices);
+        // console.log(">>>>check filteredServices: ", filteredServices);
         displayServices(filteredServices, userLat, userLon); // Hiển thị các dịch vụ đã lọc
     } else {
         alert("Không tìm thấy dịch vụ nào với các tiêu chí đã chọn.");
