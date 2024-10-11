@@ -34,16 +34,9 @@
   <title>
     antintec_hotro
   </title>
-<<<<<<< HEAD
-  <!-- Thêm Axios CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-=======
    <!--     CDN MAPBOX     -->
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
->>>>>>> c1bb116653537792eae59ab5651581022f0cee85
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
@@ -102,9 +95,6 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
-<<<<<<< HEAD
-
-=======
   {{-- <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1x0ev3YeeYKXm4-7sIzzOfsWviJ8-DL4&loading=async&libraries=maps&v=beta" defer>
 </script> --}}
@@ -112,7 +102,6 @@
         {{-- ({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script> --}}
 
   <script src="../assets/js/handleSearchMap.js"></script>
->>>>>>> c1bb116653537792eae59ab5651581022f0cee85
 </body>
 
 </html>
