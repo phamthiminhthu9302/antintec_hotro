@@ -24,7 +24,7 @@
                       </div>
                     </div>
                     <div class="ms-auto w-20 d-flex align-items-end justify-content-end">
-                      <img class="w-60 mt-2" src="../assets/img/logos/mastercard.png" alt="logo">
+                      <img class="w-60 mt-2" src="../assets/img/logos/credit_card.png" alt="logo">
                     </div>
                   </div>
                 </div>
@@ -202,7 +202,7 @@
                   @foreach ($BillingInfo as $item)
                   <div class="col-md-6">
                     <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row">
-                      <img class="w-10 me-3 mb-0" src="../assets/img/logos/visa.png" alt="logo">
+                      <img class="w-10 me-3 mb-0" src="../assets/img/logos/{{ $item->payment_method }}.png" alt="logo">
                       <h6 class="mb-0">{{ '**** **** **** ' . substr($item->card_number, -4) }}</h6>
                       <i class="fas fa-pencil-alt ms-auto text-dark cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" 
                       data-billing-id = "{{ $item->billing_id }}"
@@ -271,7 +271,6 @@
                               <form action="/billing" method="POST" role="form text-left">
                                   @csrf
                                   <input type="hidden" name="billing_id" id="billing_id" >
-                                  @method('PATCH')
                                   <div class="row">
                                       <div class="col-md-6">
                                           <div class="form-group">

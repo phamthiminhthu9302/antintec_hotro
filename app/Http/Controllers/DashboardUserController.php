@@ -19,7 +19,7 @@ class DashboardUserController extends Controller
     public function getServiceTypes()
     {
         $serviceTypes = ServiceTypes::all();
-        $servicePrices = Service::select('price')->distinct()->get();
+        $servicePrices = Service::select('price')->distinct()->orderBy('price')->get();
 
         return view('dashboard')->with([
             'serviceTypes' => $serviceTypes,

@@ -12,16 +12,42 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 let markers = [];
 let services = [];
+let userLat, userLon;
+let allServices = []; // Danh sách toàn bộ dịch vụ từ server
+let servicesWithinRadius = []; // Danh sách dịch vụ đã lọc theo bán kính 10km
+let nearbyServices = []; // Danh sách dịch vụ sau khi lọc theo loại hoặc giá
 
-fetch("/getServices")
-    .then((response) => response.json())
-    .then((data) => {
-        services = data; // Lưu dữ liệu vào biến toàn cục
-        displayServices(services); // Hiển thị dữ liệu lên form
-        createPopupContent(services); //Tạo nội dung cho popup
-        handleEventItemService(services); //Xử lý khi click vào dịch vụ
-    })
-    .catch((error) => console.error("Error:", error));
+async function fetchServices() {
+    try {
+        const response = await fetch("/getServices");
+        const services = await response.json();
+
+        // Lưu trữ dịch vụ vào mảng nearbyServices
+        allServices = services;
+
+        // Đợi getLocation() hoàn thành trước khi gọi displayServices
+        const location = await getLocation();
+        userLat = location.userLat;
+        userLon = location.userLon;
+
+        servicesWithinRadius = getNearbyServices(allServices, userLat, userLon);
+        displayServices(servicesWithinRadius, userLat, userLon); // Hiển thị dữ liệu lên form kèm vị trí
+        createPopupContent(servicesWithinRadius); // Tạo nội dung cho popup
+        handleEventItemService(servicesWithinRadius); // Xử lý khi click vào dịch vụ
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+// fetch("/getServices")
+//     .then((response) => response.json())
+//     .then((data) => {
+//         services = data; // Lưu dữ liệu vào biến toàn cục
+//         displayServices(services); // Hiển thị dữ liệu lên form
+//         createPopupContent(services); //Tạo nội dung cho popup
+//         handleEventItemService(services); //Xử lý khi click vào dịch vụ
+//     })
+//     .catch((error) => console.error("Error:", error));
 
 function createPopupContent(services) {
     return `
@@ -51,8 +77,49 @@ function createPopupContent(services) {
             </li>`;
 }
 
+//Hàm lấy vị trí hiện tại
+function getLocation() {
+    console.log(">>>>getlocation");
+
+    return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+                    console.log("User's location: ", userLat, userLon);
+
+                    // displayServices(services, userLat, userLon);
+                    resolve({ userLat, userLon });
+                },
+                function (error) {
+                    reject(error); // Xử lý khi xảy ra lỗi
+                }
+            );
+        } else {
+            reject(new Error("Geolocation is not supported by this browser!"));
+        }
+    });
+}
+
+function getNearbyServices(data, userLat, userLon) {
+    let radius = 10;
+    return data.filter((service) => {
+        const serviceLat = service.latitude;
+        const serviceLon = service.longitude;
+        const distance = haversineDistance(
+            userLat,
+            userLon,
+            serviceLat,
+            serviceLon
+        );
+        return distance <= radius;
+    });
+}
+
 // Hiển thị danh sách dịch vụ lên form
-function displayServices(data) {
+function displayServices(data, userLat = null, userLon = null) {
+    console.log(">>>>displayServices");
     const serviceList = document.getElementById("service-list");
     serviceList.innerHTML = ""; // Xóa dữ liệu cũ trước khi thêm mới
 
@@ -60,21 +127,50 @@ function displayServices(data) {
     markers.forEach((marker) => map.removeLayer(marker));
     markers = []; // Xóa dữ liệu marker cũ
 
-    data.forEach((service) => {
-        // Tạo một marker cho mỗi dịch vụ
-        const marker = L.marker([service.latitude, service.longitude]).addTo(
-            map
-        );
-        marker.bindPopup(createPopupContent(service));
+    if (userLat !== null && userLon !== null) {
+        console.log("Initial data:", data);
+        // servicesWithinRadius = getNearbyServices(data, userLat, userLon);
+        // console.log("Nearby services after filtering:", servicesWithinRadius);
+        if (data.length === 0) {
+            console.log("No services to display");
+            return; // Không có dịch vụ nào để hiển thị
+        }
 
-        // Thêm marker vào danh sách marker để dễ quản lý
-        markers.push(marker);
+        // console.log(">>>servicesWithinRadius",servicesWithinRadius);
 
-        //Tạo cấu trúc cho danh sách dịch vụ trên form
-        const listItemService = document.createElement("div");
-        listItemService.innerHTML = createPopupContent(service);
-        serviceList.appendChild(listItemService);
-    });
+        data.forEach((service) => {
+            // Tạo một marker cho mỗi dịch vụ
+            const marker = L.marker([
+                service.latitude,
+                service.longitude,
+            ]).addTo(map);
+
+            marker.bindPopup(createPopupContent(service));
+
+            // Thêm marker vào danh sách marker để dễ quản lý
+            markers.push(marker);
+
+            //Tạo cấu trúc cho danh sách dịch vụ trên form
+            const listItemService = document.createElement("div");
+            listItemService.innerHTML = createPopupContent(service);
+            serviceList.appendChild(listItemService);
+        });
+    }
+}
+
+// Hàm tính khoảng cách Haversine
+function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+        0.5 -
+        Math.cos(dLat) / 2 +
+        (Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            (1 - Math.cos(dLon))) /
+            2;
+    return R * 2 * Math.asin(Math.sqrt(a));
 }
 
 // Biến để lưu marker hiện tại
@@ -87,10 +183,10 @@ function handleEventItemService(data) {
             // Kiểm tra xem người dùng có click vào một phần tử LI không
             const listItem = event.target.closest("li");
             if (listItem) {
-                const lat = parseFloat(listItem.getAttribute("data-lat")); 
+                const lat = parseFloat(listItem.getAttribute("data-lat"));
                 const lon = parseFloat(listItem.getAttribute("data-lon"));
                 // Cập nhật vị trí bản đồ mà không khởi tạo lại
-                map.setView([lat, lon], 13);
+                map.setView([lat, lon], 19);
 
                 // Tìm dịch vụ được chọn từ danh sách data dựa trên lat và lon
                 const selectedService = data.find((service) => {
@@ -108,43 +204,74 @@ function handleEventItemService(data) {
                     } else {
                         currentMarker = L.marker([lat, lon])
                             .addTo(map)
-                            .bindPopup(createPopupContent(selectedService)); 
+                            .bindPopup(createPopupContent(selectedService));
                     }
 
                     // Mở popup
                     currentMarker.openPopup();
                 }
-
             }
         });
 }
 
-// Hàm lọc dịch vụ theo quốc gia hoặc các tiêu chí khác
-function filterPrices() {
+function filterFormServices() {
     const selectedPrice = document.getElementById("price").value;
-
-    const filteredPrices = services.filter((service) => {
-        return selectedPrice == service.price;
-    });
-
-    // Hiển thị các dịch vụ đã lọc
-    displayServices(filteredPrices);
-}
-
-// document.getElementById("country").addEventListener("change", filterCountry);
-
-function filterServices() {
     const selectedService = document.getElementById("service-type").value;
 
-    // Lọc dịch vụ theo quốc gia (ví dụ)
-    const filteredServices = services.filter((service) => {
-        return selectedService == service.service_types_id;
+    if (typeof userLat === "undefined" || typeof userLon === "undefined") {
+        console.error("Địa chỉ người dùng không có sẵn!");
+        return;
+    }
+
+    if (!servicesWithinRadius || servicesWithinRadius.length === 0) {
+        console.error("Không có dịch vụ nào gần đây!");
+        return;
+    }
+
+    const servicesCopy = [...servicesWithinRadius];
+    const priceSelect = document.getElementById("price");
+
+    const filteredServices = servicesCopy.filter((service) => {
+        let matchPrice = true;
+        let matchServiceType = true;
+
+        if (selectedService) {
+            matchServiceType = parseInt(selectedService) === parseInt(service.service_types_id);
+            priceSelect.disabled = false;
+            if (selectedPrice) {
+                matchPrice = parseFloat(selectedPrice) === parseFloat(service.price);
+            }
+        } else {
+            priceSelect.disabled = true;
+        }
+        return matchPrice && matchServiceType; // Trả về dịch vụ thỏa mãn cả hai điều kiện
     });
 
-    // Hiển thị các dịch vụ đã lọc
-    displayServices(filteredServices);
+    // Kiểm tra rằng filteredServices không phải là một mảng rỗng
+    if (filteredServices.length > 0) {
+        console.log(">>>>check filteredServices: ", filteredServices);
+        displayServices(filteredServices, userLat, userLon); // Hiển thị các dịch vụ đã lọc
+    } else {
+        alert("Không tìm thấy dịch vụ nào với các tiêu chí đã chọn.");
+    }
 }
 
-document.getElementById("service-form").addEventListener("submit", function (event) {
-    event.preventDefault(); 
+document.getElementById("service-type").addEventListener("change", function () {
+    filterFormServices();
 });
+
+document.getElementById("price").addEventListener("change", function () {
+    filterFormServices();
+});
+
+document
+    .getElementById("service-form")
+    .addEventListener("submit", function (event) {
+        event.preventDefault();
+        filterFormServices();
+    });
+
+window.onload = function () {
+    getLocation();
+    fetchServices();
+};

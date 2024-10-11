@@ -20192,8 +20192,8 @@ pre[class*="language-"] {
 }
 
 .form-container {
-    max-width: 400px;
-    max-height: 520px;
+    width: 400px;
+    height: 520px;
     margin: 72px auto;
     padding: 20px;
     background: #fff;

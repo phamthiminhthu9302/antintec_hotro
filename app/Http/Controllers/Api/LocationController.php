@@ -11,7 +11,7 @@ class LocationController extends Controller
 {
     use HttpResponses; 
 
-    function createLocation(Request $request){
+    public function createLocation(Request $request){
         try {
 
             $useData = auth()->user();
@@ -33,7 +33,7 @@ class LocationController extends Controller
         }
     }
     
-    function updateLocation(Request $request){
+    public function updateLocation(Request $request){
         try {
 
             $useData = auth()->user();
@@ -56,7 +56,7 @@ class LocationController extends Controller
         }
     }
 
-    function getLocation(Request $request){
+    public function getLocation(Request $request){
         try {
 
             $useData = auth()->user();

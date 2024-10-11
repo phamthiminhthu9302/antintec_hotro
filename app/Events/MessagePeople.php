@@ -26,7 +26,7 @@ class MessagePeople implements ShouldBroadcast
    *
    * @param array $results
    * @param array $message
-   * @param string $count
+   * @param array $count
    * @return void
    */
   public function __construct($results, $message, $count)
