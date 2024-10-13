@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\MessageSent;
+use App\Events\TechnicianLocationUpdated;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\HomeController;
@@ -37,8 +38,12 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
 	Route::get('/dashboard', [DashboardUserController::class, 'getServiceTypes'])->name('dashboard');
+	// Route::get('/dashboard/{id}',function(){
+	// 	event(new TechnicianLocationUpdated(8.713577,106.619327));
+	// });
+	Route::post('/save-location', [DashboardUserController::class, 'savelocation']);
 	Route::get('/getServices', [DashboardUserController::class, 'getAllServices']);
-
+	
 	Route::post('/billing', [BillingInfoController::class, 'insertUpdate']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
 	Route::patch('/billing', [BillingInfoController::class, 'update']);

@@ -2062,6 +2062,8 @@ module.exports = {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
+console.log('aPP INCLUDE');
+
 /***/ }),
 
 /***/ "./resources/js/bootstrap.js":
@@ -2092,10 +2094,16 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "f833ed006b07e2964bfd",
+  key: "b5f44c6c2b7e9df067d7",
   cluster: "ap1",
   forceTLS: true
 });
+/**
+ * Echo exposes an expressive API for subscribing to channels and listening
+ * for events that are broadcast by Laravel. Echo and event broadcasting
+ * allow your team to quickly build robust real-time web applications.
+ */
+// import './echo';
 
 /***/ }),
 

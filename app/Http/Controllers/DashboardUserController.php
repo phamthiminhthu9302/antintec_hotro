@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\ServiceTypes;
+use App\Models\Location;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Events\TechnicianLocationUpdated;
 
 class DashboardUserController extends Controller
 {
@@ -25,5 +28,26 @@ class DashboardUserController extends Controller
             'serviceTypes' => $serviceTypes,
             'servicePrices' => $servicePrices,
         ]);
+    }
+
+    public function saveLocation(Request $request)
+    {
+        $user = User::find($request->id);
+
+        if($user && $user->role === 'technician'){
+            $location = Location::updateOrCreate(
+                ['technician_id' => $request->id], 
+                [
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                ]
+            );
+
+            broadcast(new TechnicianLocationUpdated($request->id, $request->latitude, $request->longitude))->toOthers();
+
+            return response()->json(['message' => 'Vị trí đã được lưu vào database!']);
+        }else{
+            return response()->json(['message' => 'Chỉ cập nhật tọa độ với kỹ thuật viên!']);
+        }
     }
 }

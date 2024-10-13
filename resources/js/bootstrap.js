@@ -20,20 +20,12 @@ import Echo from 'laravel-echo';
 
 window.Pusher = require('pusher-js');
 
-<<<<<<< HEAD
 window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: process.env.MIX_PUSHER_APP_KEY,
-  cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-  forceTLS: true
+    broadcaster: 'pusher',
+    key: process.env.MIX_PUSHER_APP_KEY,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    forceTLS: true
 });
-=======
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     forceTLS: true
-// });
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -41,5 +33,4 @@ window.Echo = new Echo({
  * allow your team to quickly build robust real-time web applications.
  */
 
-import './echo';
->>>>>>> c1bb116653537792eae59ab5651581022f0cee85
+// import './echo';

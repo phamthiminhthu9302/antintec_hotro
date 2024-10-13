@@ -87,13 +87,15 @@ function getLocation() {
                 function (position) {
                     const userLat = position.coords.latitude;
                     const userLon = position.coords.longitude;
+
                     console.log("User's location: ", userLat, userLon);
-                    var circle = L.circle([userLat, userLon], {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5,
-                        radius: 10
-                      }).addTo(map)
+                    sendLocationToServer(userLat, userLon);
+                    // var circle = L.circle([userLat, userLon], {
+                    //     color: 'red',
+                    //     fillColor: '#f03',
+                    //     fillOpacity: 0.5,
+                    //     radius: 10
+                    //   }).addTo(map)
                     // displayServices(services, userLat, userLon);
                     resolve({ userLat, userLon });
                 },
@@ -241,10 +243,13 @@ function filterFormServices() {
         let matchServiceType = true;
 
         if (selectedService) {
-            matchServiceType = parseInt(selectedService) === parseInt(service.service_types_id);
+            matchServiceType =
+                parseInt(selectedService) ===
+                parseInt(service.service_types_id);
             priceSelect.disabled = false;
             if (selectedPrice) {
-                matchPrice = parseFloat(selectedPrice) === parseFloat(service.price);
+                matchPrice =
+                    parseFloat(selectedPrice) === parseFloat(service.price);
             }
         } else {
             priceSelect.disabled = true;
@@ -261,6 +266,82 @@ function filterFormServices() {
     }
 }
 
+function sendLocationToServer(userLat, userLon) {
+    // console.log(">>>sendLocationToServer", userLat, userLon);
+    var latitude = userLat;
+    var longitude = userLon;
+    var role = document.getElementById("role").value;
+    var userId = document.getElementById("userId").value;
+    createMarker(userId, role, latitude, longitude);
+    $.ajax({
+        type: "POST",
+        url: "/save-location",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            id: userId,
+            role: role,
+            latitude: latitude,
+            longitude: longitude,
+        },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (xhr, status, error) {
+            console.log(status);
+        },
+    });
+}
+var technicianIcon = L.icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/256/5025/5025140.png",
+    iconSize: [40, 40], // Kích thước icon
+});
+
+var customerIcon = L.icon({
+    iconUrl:
+        "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+    iconSize: [25, 41], // Kích thước icon
+    iconAnchor: [12, 41], // Vị trí neo icon
+    popupAnchor: [1, -34], // Vị trí hiển thị popup
+});
+
+function createMarker(userId, role, latitude, longitude) {
+    var position = [latitude, longitude];
+
+    // Kiểm tra role và chọn icon tương ứng
+    const icon = role === "technician" ? technicianIcon : customerIcon;
+
+    var marker = L.marker(position, { icon: icon }).addTo(map);
+    marker.bindPopup(`Id:${userId} - Role: ${role}`);
+}
+
+Pusher.logToConsole = true;
+var pusher = new Pusher("b5f44c6c2b7e9df067d7", {
+    cluster: "ap1",
+});
+
+var technicianMarkers = {};
+
+var channel = pusher.subscribe("technician-location");
+channel.bind("TechnicianLocationUpdated", function (data) {
+    // console.log("Technician location updated:", data);
+    // Cập nhật vị trí kỹ thuật viên trên bản đồ
+    updateTechnicianMarker(data);
+});
+
+function updateTechnicianMarker(data) {
+    // console.log(">>>update");
+    var position = [data.latitude,  data.longitude];
+    const icon = technicianIcon;
+
+    if (technicianMarkers[data.technicianId]) {
+        technicianMarkers[data.technicianId].setLatLng(position);
+    } else {
+        technicianMarkers[data.technicianId] = L.marker(position, { icon: icon }).addTo(map);
+    }
+}
+
 document.getElementById("service-type").addEventListener("change", function () {
     filterFormServices();
 });
@@ -269,9 +350,7 @@ document.getElementById("price").addEventListener("change", function () {
     filterFormServices();
 });
 
-document
-    .getElementById("service-form")
-    .addEventListener("submit", function (event) {
+document.getElementById("service-form").addEventListener("submit", function (event) {
         event.preventDefault();
         filterFormServices();
     });

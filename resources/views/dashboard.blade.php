@@ -8,6 +8,10 @@
       <h3 class="form-title"> Tìm dịch vụ</h3>
       <form id="service-form">
         <div class="form-group">
+          <input type="hidden" name="role" id="role" value="{{ auth()->user()->role }}">
+          <input type="hidden" name="userId" id="userId" value="{{ auth()->user()->user_id }}">
+        </div>
+        <div class="form-group">
           <label for="service-type">Loại dịch vụ:</label>
           <select id="service-type" name="service_type" onchange="filterFormServices()">
             <option value="">Chọn dịch vụ</option>
