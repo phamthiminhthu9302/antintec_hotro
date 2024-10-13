@@ -96,6 +96,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
 	Route::get('/dashboard/update/{request_id}/{status}', [RequestController::class, 'updateStatus']);
 	Route::get('/dashboard/read/{notification_id}', [RequestController::class, 'markAsRead']);
+	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
+	Route::get('/map', function () {
+		return view('map');
+	});
 	Route::get('/review/{requestId}', [ReviewController::class, 'create'])->name('reviews.create');
 	Route::post('/review/{requestId}', [ReviewController::class, 'store'])->name('reviews.store');
 });

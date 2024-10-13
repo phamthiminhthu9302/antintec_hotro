@@ -18,7 +18,6 @@ class ProfileController extends Controller
 {
 
 
-
     public function profile()
     {
 
@@ -40,37 +39,40 @@ class ProfileController extends Controller
     {
 
         $validated = $request->validate([
-            'phone' => ['string', 'max:15', 'unique:users'],
-            'address' => ['string', 'max:255'],
-            'role' => ['string', 'max:15'],
+            'phone' => ['string', 'max:15', 'unique:users', 'nullable'],
+            'address' => ['string', 'max:255', 'nullable'],
+            'role' => ['string', 'max:15', 'nullable'],
         ]);
 
         $user = auth()->user();
-        $user->phone = $validated['phone'];
-        $user->address = $validated['address'];
-        $user->role = $validated['role'];
+        $data = null;
+        foreach ($validated as $key => $value) {
+            if ($key != null) {
+                $user->$key = $value;
+            }
+        }
         $user->save();
 
 
         return $this->success($user);
     }
 
-    public function updateAddress(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            'address' => ['required', 'string', 'max:255'],
-        ]);
+//    public function updateAddress(Request $request): JsonResponse
+//    {
+//        $validated = $request->validate([
+//            'address' => ['required', 'string', 'max:255'],
+//        ]);
+//
+//        $this->setAddress('address', $validated['address']);
+//        return $this->success(null);
+//
+//    }
 
-        $this->setAddress('address', $validated['address']);
-        return $this->success(null);
-
-    }
-
-    public function deleteAddress(Request $request): JsonResponse
-    {
-        $this->setAddress('address', null);
-        return $this->success(null);
-    }
+//    public function deleteAddress(Request $request): JsonResponse
+//    {
+//        $this->setAddress('address', null);
+//        return $this->success(null);
+//    }
 
     public function setField($field, $value): void
     {
@@ -79,11 +81,10 @@ class ProfileController extends Controller
         $user->save();
     }
 
-    //change password will revoke access token, user will have to log in again to obtain new access token
     public function updatePassword(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'password' => [Password::defaults()]
+            'password' => ['required', 'max:100']//[Password::defaults()]
         ]);
 
         $this->setField('password', Hash::make($validated['password']));
@@ -104,7 +105,7 @@ class ProfileController extends Controller
     public function updatePaymentMethod(Request $request): JsonResponse
     {
         $validated = request()->validate([
-            'request_id' => ['required', 'numeric','min:1'],
+            'request_id' => ['required', 'numeric', 'min:1'],
             'payment_method' => ['required', Rule::in('cash', 'credit_card', 'e_wallet')],
         ], ['payment_method.in' => 'Payment method must be in [cash, credit_card, e_wallet]']);
         //1. get customer id
@@ -115,22 +116,23 @@ class ProfileController extends Controller
         //3. change payment methods for specific request id
         $requests = \App\Models\Request::where('customer_id', $user_id)->get();
         foreach ($requests as $request) {
-            if ($request->request_id === $requestId) {
+            if ($request->request_id === $requestId && $request->customer_id === $user_id) {
                 $paymentUpdated = Payment::where('request_id', $request->request_id)->update(['payment_method' => $validated['payment_method']]);
                 return $this->success($paymentUpdated);
             }
         }
-        return $this->fail("Invalid request");
+        return $this->fail('Please check you are the owner of this request.');
     }
+
     //-------------------------------------
 
 
-
-    public function updateInfoTech(Request $request){
+    public function updateInfoTech(Request $request)
+    {
 
         $useData = auth()->user();
 
-        if($useData->role == "technician"){
+        if ($useData->role == "technician") {
 
             $techDetail = TechnicianDetail::firstOrNew(['technician_id' => $useData->user_id]);
 

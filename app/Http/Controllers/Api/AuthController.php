@@ -92,7 +92,7 @@ class AuthController extends Controller
             if (Auth::attempt($credentials) || Auth::attempt($usernameCredentials)) {
                 session()->regenerate();
                 $user = Auth::user();
-                $token = $user->createToken('API Token')->plainTextToken;
+                $token = $user->createToken('API Token', ['role:USER'])->plainTextToken;
                 return response()->json([
                     'status' => true,
                     'message' => 'User login successfully',
