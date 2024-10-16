@@ -5,7 +5,10 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ServicesController;
 use App\Http\Controllers\api\ReviewController;
-
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\RequestController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ServiceHistoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -59,4 +62,6 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
 
     Route::apiResource('reviews',ReviewController::class);
+   
 });
+Route::put('/reqInfoUpdate/{id}', [RequestController::class, 'updateInfo']);
