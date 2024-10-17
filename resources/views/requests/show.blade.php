@@ -10,7 +10,7 @@
             <div class="card bg-transparent shadow-xl">
               <div class="overflow-hidden position-relative border-radius-xl" style="background-image: url(''); max-height:300px  "> 
                 <a href="{{ asset('assets/img/requests-photos/'.$requests->photo) }}" target="_blank" style="cursor: zoom-in">
-                  <img src="{{ asset('assets/img/requests-photos/'.$requests->photo) }}" >
+                  <img src="{{ asset('assets/img/requests-photos/'.$requests->photo) }}" alt="No Image">
               </a>
               </div>
             </div>
@@ -92,9 +92,9 @@
             </div>
           </div>
           <div class="card-body p-3 pb-0">
-            Descripton:  {{ $requests->description }} <br>
             Request: {{ $requests->service->name }} <br>
-            Price: {{ $requests->service->price }} VND     
+            Price: {{ $requests->service->price }} VND <br>
+            <span>Description: <pre>{{ $requests->description }}</pre></span>
           </div>
         </div>
       </div>

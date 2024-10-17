@@ -63,5 +63,5 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
 
     Route::apiResource('reviews',ReviewController::class);
    
+    Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
 });
-Route::put('/reqInfoUpdate/{id}', [RequestController::class, 'updateInfo']);
