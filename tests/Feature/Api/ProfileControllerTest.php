@@ -26,7 +26,7 @@ class ProfileControllerTest extends TestCase
         $this->actingAs($user);
         $response = $this->put('/api/profile', [
             'phone' => '0000000000',
-            'address' => '192 Lầu 3 Huỳnh Mẫn Đạt Q5',
+            'address' => '192 Lầu 5 Huỳnh Mẫn Đạt Q5',
             'role' => 'technician'
         ]);
         echo $response->getContent();

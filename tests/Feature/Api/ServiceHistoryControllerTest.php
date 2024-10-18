@@ -31,7 +31,7 @@ class ServiceHistoryControllerTest extends ApiSender
         $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         $response = $this->sendApi('GET', '/api/admin/services-management/12', [], $authorization);
         echo $response->getContent();
-        $response->assertStatus(200);
+        $response->assertStatus(401);
     }
 
 

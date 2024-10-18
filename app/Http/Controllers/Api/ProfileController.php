@@ -37,23 +37,18 @@ class ProfileController extends Controller
 
     public function updateProfile(Request $request): JsonResponse
     {
-
         $validated = $request->validate([
             'phone' => ['string', 'max:15', 'unique:users', 'nullable'],
             'address' => ['string', 'max:255', 'nullable'],
             'role' => ['string', 'max:15', 'nullable'],
         ]);
-
         $user = auth()->user();
-        $data = null;
         foreach ($validated as $key => $value) {
             if ($key != null) {
                 $user->$key = $value;
             }
         }
         $user->save();
-
-
         return $this->success($user);
     }
 

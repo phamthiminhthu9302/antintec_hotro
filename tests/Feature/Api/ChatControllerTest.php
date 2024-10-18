@@ -2,10 +2,7 @@
 
 namespace Tests\Feature\Api;
 
-use Api\ApiSender;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+
 
 class ChatControllerTest extends ApiSender
 {
@@ -13,15 +10,14 @@ class ChatControllerTest extends ApiSender
      * A basic feature test example.
      */
 
-
     public function test_getMessageByRoleAdminFailed(): void
     {
-        $authoriztion = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
+        $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         // 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc' -> role user id 12 in db
         //Bearer 5|qp3WrlQaLvezo6mHfQCLv2LZCW00G5P4SPKO4TmUde48944b -> role *
 
         //only role admin can access this route
-        $response = $this->sendApi('GET', '/api/admin/messages/sender/12', [], $authoriztion);
+        $response = $this->sendApi('GET', '/api/admin/messages/sender/12', [], $authorization);
         echo $response->getContent();
         $response->assertStatus(401);
     }
@@ -58,7 +54,6 @@ class ChatControllerTest extends ApiSender
             'message' => 'sender id 12 send from php unit test to receiver id 8',
             'receiver_id' => '8'
         ], $authorization);
-
         echo $response->getContent();
         $response->assertStatus(200);
     }
