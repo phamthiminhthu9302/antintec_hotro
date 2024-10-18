@@ -63,7 +63,7 @@ class ProfileControllerTest extends TestCase
             'Authorization' => 'Bearer 5|qp3WrlQaLvezo6mHfQCLv2LZCW00G5P4SPKO4TmUde48944b',
             'Accept' => 'application/vnd.api+json',
             'Content-Type' => 'application/vnd.api+json'
-        ])->json('PUT','/api/profile/payment', [
+        ])->json('PUT', '/api/profile/payment', [
             "request_id" => 4,
             "payment_method" => "e_wallet"]);
         echo $response->getContent();

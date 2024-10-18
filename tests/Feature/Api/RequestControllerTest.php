@@ -1,9 +1,6 @@
 <?php
 
 namespace Api;
-
-use DateTime;
-use DateTimeZone;
 use Tests\Feature\Api\ApiSender;
 
 class RequestControllerTest extends ApiSender
@@ -48,7 +45,8 @@ class RequestControllerTest extends ApiSender
         $response->assertStatus(200);
     }
 
-    public function test_readNotificationFailed() {
+    public function test_readNotificationFailed()
+    {
         //failed because user id not match in notification table
         $authorization = 'Bearer 5|qp3WrlQaLvezo6mHfQCLv2LZCW00G5P4SPKO4TmUde48944b';
         $response = $this->sendApi('put', '/api/requests/read', [
