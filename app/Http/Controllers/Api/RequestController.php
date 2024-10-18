@@ -23,10 +23,10 @@ class RequestController extends Controller
             'longitude' => 'required|numeric',
             'photo' => 'nullable|string',
             'description' => 'nullable|string',
-            'status' => 'required|string',
+            'status' => ['required', Rule::in('pending', 'in_progress', 'completed', 'cancelled')],
             'location' => 'required|string',
             'requested_at' => 'required|date',
-        ]);
+        ], ['status.in' => 'Invalid status. Valid status: [pending, in_progress, completed,cancelled]']);
         \App\Models\Request::create([
             'customer_id' => $user['user_id'],
             'technician_id' => $validated['technician_id'],
@@ -61,17 +61,14 @@ class RequestController extends Controller
             'status' => ['required', 'string', Rule::in('pending', 'cancelled', 'completed', 'in_progress')]
         ],
             ['request_id.exists' => 'Invalid request id',
-                'status.in' => 'valid status:pending, cancelled, completed, in_progress']);
-
+                'status.in' => 'Invalid status.  Valid status: [pending, cancelled, completed, in_progress]']);
         $userRequest = \App\Models\Request::where('request_id', $validated['request_id'])->with('service')->first();
         $userRequest->status = $validated['status'];
         $statusMessages = ['pending' => "đang chờ xác nhận",
             'in_progress' => "đang được thực hiện",
             'cancelled' => "đã bị hủy",
             'completed' => "đã hoàn thành"];
-
         $message = "Yêu cẩu " . $userRequest['service']['name'] . " của bạn " . $statusMessages[$validated['status']];
-
         Notification::create([
             'user_id' => $user['user_id'],
             'message' => $message,
