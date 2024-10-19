@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ServiceHistoryController;
 use App\Http\Controllers\Api\ServicesController;
 use App\Http\Controllers\api\ReviewController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -63,7 +64,8 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::post('services/store', [ServicesController::class, 'store']);
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
 
-    Route::apiResource('reviews',ReviewController::class);
+    Route::apiResource('reviews', ReviewController::class);
    
     Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
+
 });
