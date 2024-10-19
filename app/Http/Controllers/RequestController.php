@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use carbon\Carbon;
 
 class RequestController extends Controller
 {
@@ -127,5 +128,12 @@ class RequestController extends Controller
         return view('requests.show', [
             'requests' => $Requests
         ]);
+    }
+    public function updateDescription(Request $request,$id){
+        $model = \App\Models\Request::find($id);
+        $data = $model->description."\n".Carbon::now()->toDateTimeString().' (KTV): '.$request->description;
+        if($model->update(array('description'=>$data))){
+            return redirect('/requests/'.$id)->with('success','Description updated successfully');
+        }
     }
 }

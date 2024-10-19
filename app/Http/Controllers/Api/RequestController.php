@@ -34,8 +34,8 @@ class RequestController extends Controller
         {
             return response()->json(['message' => 'No request found' ],404);
         }
-        if($model->status !== 'pending'){
-            return response()->json(['message' => 'Request is no longer pending' ]);
+        if($model->status !== 'in_progress'){
+            return response()->json(['message' => 'Request is no longer in progress' ]);
         }
         if($model->technician_id != Auth::user()->user_id){
             return response()->json(['message' => 'Not authorized' ],403);

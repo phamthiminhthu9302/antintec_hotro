@@ -92,9 +92,50 @@
             </div>
           </div>
           <div class="card-body p-3 pb-0">
+            @if($errors->any())
+                  <div class="mt-3  alert alert-primary alert-dismissible fade show" role="alert">
+                      <span class="alert-text text-white">
+                      {{$errors->first()}}</span>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                          <i class="fa fa-close" aria-hidden="true"></i>
+                      </button>
+                  </div>
+              @endif
+              @if(session('success'))
+                  <div class="m-3  alert alert-success alert-dismissible fade show" id="alert-success" role="alert">
+                      <span class="alert-text text-white">
+                      {{ session('success') }}</span>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                          <i class="fa fa-close" aria-hidden="true"></i>
+                      </button>
+                  </div>
+              @endif
             Request: {{ $requests->service->name }} <br>
             Price: {{ $requests->service->price }} VND <br>
-            <span>Description: <pre>{{ $requests->description }}</pre></span>
+            <span>Description: <pre>{{ $requests->description }}</pre></span><br>
+            @if ($requests->status=='in_progress')
+            <a class="btn bg-gradient-dark mb-0" id="open-form-button" href="javascript:;"><i class="fas fa-plus"></i>&nbsp;&nbsp;Situation update</a>                
+            @endif
+              <div id="overlay-form" style="display: none;">                  
+                  <form action="/requests/{{ $requests->request_id }}" method="POST" role="form text-left">
+                  @csrf        
+                  @method('PATCH')
+                  <input class="form-control" type="text" placeholder="Situation" id="description" name="description" value={{ old('billing_address')}}>
+                    <div class="d-flex justify-content-end">
+                      <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Add' }}</button>
+                    </div>
+                  </form>
+              </div>
+              <script>
+                document.getElementById("open-form-button").addEventListener("click", function() {
+                const overlayForm = document.getElementById("overlay-form");
+                  if (overlayForm.style.display === "block") {
+                    overlayForm.style.display = "none";
+                  } else {
+                    overlayForm.style.display = "block";
+                    }
+                      });
+                </script>
           </div>
         </div>
       </div>
