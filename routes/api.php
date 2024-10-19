@@ -3,12 +3,12 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RequestController;
+use App\Http\Controllers\Api\ServiceHistoryController;
 use App\Http\Controllers\Api\ServicesController;
 use App\Http\Controllers\api\ReviewController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\RequestController;
-use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\ServiceHistoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -47,7 +47,9 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     //only admin can access messages by path variable
     Route::get('/admin/messages/sender/{id}', [ChatController::class, 'getMessagesByUserId']);
 
+    Route::post('/requests', [RequestController::class, 'createRequest']);
     Route::put('/requests/status', [RequestController::class, 'updateRequestStatus']);
+    Route::put('/requests/read', [RequestController::class, 'updateReadNotification']);
 
     Route::get('/location', [LocationController::class, 'getLocation']);
     Route::post('/location/add', [LocationController::class, 'createLocation']);

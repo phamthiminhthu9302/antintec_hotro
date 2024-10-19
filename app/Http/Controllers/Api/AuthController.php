@@ -9,20 +9,16 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 
 
 class AuthController extends Controller
 {
     use HttpResponses;
 
-
     public function register(CreateUserRequest $request)
     {
-
         try {
             $request->validated($request->all());
-
             if ($request->password !== $request->password_confirmation) {
                 return $this->fail("Password mismatch");
             }
@@ -34,9 +30,7 @@ class AuthController extends Controller
                 'role' => $request->role,
                 'address' => $request->address,
             ]);
-
             $token = $user->createToken('API Token')->plainTextToken;
-
             return response()->json([
                 'status' => true,
                 'message' => 'User create successfully',
