@@ -83,6 +83,11 @@ class User extends Authenticatable
         return $this->hasMany(TechnicianAvailability::class, 'technician_id');
     }
 
+    public function technicianServices()
+    {
+        return $this->hasMany(TechnicianService::class, 'technician_id');
+    }
+
     // Một kỹ thuật viên có thể có nhiều vị trí thời gian thực
     public function locations(): HasMany
     {

@@ -1,0 +1,475 @@
+/* Form user profile */
+.form-group-input-time {
+    display: flex;
+    gap: 6px;
+}
+#day_of_week {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid #d2d6da;
+    border-radius: 0.5rem;
+    color: #495057;
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4rem;
+    padding: 0.5rem 0.75rem;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    width: 100%;
+}
+
+/* Map  */
+#map {
+    height: 100vh;
+    width: 100%;
+    z-index: 0;
+}
+
+/* Đảm bảo bố cục hợp lý */
+.google-map-customer {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.form-container,
+.form-container-rescue {
+    width: 400px;
+    height: 500px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    left: 45%;
+    transform: translateX(-40%);
+    z-index: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+h2 {
+    text-align: center;
+    position: relative;
+    width: 364px;
+}
+
+#service-form {
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+select,
+button,
+input[type="text"],
+#issue {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-phone {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    -moz-appearance: textfield;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.filter-results {
+    display: none;
+    margin-top: 10px;
+}
+
+.filter-results ul {
+    list-style: none;
+    padding: 0;
+}
+
+.filter-results ul li {
+    padding: 5px 0;
+    border-top: 1px solid #ccc;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* location */
+.location-photo {
+    width: 100%;
+    height: 180px;
+}
+
+.location-title-text {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 0px;
+}
+
+.location-title-service {
+    color: #000;
+    font-weight: 500;
+    margin-left: -4px;
+    margin-bottom: 0px;
+}
+
+p.location-title-text {
+    margin-bottom: 0px !important;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.icon-phone {
+    width: 26px;
+    height: 26px;
+}
+
+.leaflet-popup-content-wrapper {
+    max-width: 260px;
+}
+
+#service-list {
+    padding: 0px;
+    list-style-type: none;
+}
+
+#service-card {
+    list-style-type: none;
+}
+
+.sidebar-form-main {
+    position: absolute;
+    top: 26px;
+    left: 0;
+    right: 0;
+    z-index: 5;
+}
+
+.nav-side-bar-main a {
+    font-size: 40px;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px;
+    text-align: center;
+}
+
+.nav-side-bar-main {
+    position: absolute;
+    left: 16px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    background: #ffff;
+    border-right: 2px solid #eae0e0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.section-form-service {
+    position: absolute;
+    top: 0;
+    height: 500px;
+    width: 0;
+    opacity: 0;
+    transition: all ease-in 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#first:target {
+    opacity: 1;
+    position: absolute;
+    left: 0;
+    width: 500px;
+    height: 500px;
+    z-index: 10;
+}
+
+#second:target {
+    opacity: 1;
+    position: absolute;
+    left: 0;
+    width: 500px;
+    height: 500px;
+    z-index: 10;
+}
+
+.input-box {
+    /* margin-bottom: 15px; */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.custom-file-label {
+    display: block;
+    border: 1px solid #ccc; /* Viền xám nhạt */
+    padding: 12px;
+    border-radius: 4px;
+    text-align: left;
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    top: 12px;
+    left: -4px;
+    font-weight: 600;
+}
+
+.custom-file-label::after {
+    content: "Browse"; /* Chữ Browse thêm qua content */
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+
+.custom-file-image {
+    display: none; /* Ẩn input file mặc định */
+}
+
+.span-file {
+    font-size: 12px;
+    font-weight: bold;
+    color: #344767;
+}
+
+.leaflet-control-zoom {
+    top: 526px;
+    left: 6px;
+}
+
+.form-title-rescue,
+.form-title {
+    color: #007bff;
+}
+
+.header-form-service {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+.icon-arrow-left {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+/* form technician */
+.add-skill-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.add-skill-container .mb-3 {
+    flex: 1;
+}
+
+.add-skill-container input,
+.add-skill-container select {
+    height: 50px;
+    width: 100%;
+    min-width: 0;
+}
+
+#add-skill {
+    height: 40px;
+    line-height: 40px;
+    flex-shrink: 0;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 36px;
+}
+
+.align-items-center {
+    align-items: 0;
+}
+
+.header-text {
+    text-align: initial !important; /* Hủy bỏ thiết lập */
+}
+
+/* Styling for the popup */
+.custom-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Styling for the popup content */
+.custom-popup-content {
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    width: 60%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+    /* Move the popup back into the center */
+    transform: translate(-50%, -50%);
+}
+
+/* Layout for form rows */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+/* Styling for input fields */
+.input-box {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.input-box:last-child {
+    margin-right: 0;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Full width row */
+.full-row {
+    width: 100%;
+}
+
+/* Form actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* .btn-submit,
+.btn-close {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+} */
+
+.btn-submit {
+    background-color: #28a745;
+    color: white;
+    width: 550px;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#close-popup {
+    /* display: block; */
+    width: 450px;
+    height: 36px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #dc3545; /* Màu đỏ */
+    color: white;
+    cursor: pointer;
+    margin-left: 10px; /* Khoảng cách với nút gửi yêu cầu */
+    /* transition: background-color 0.3s; */
+}
+
+.btn-close:hover {
+    background-color: #c82333; /* Màu đỏ đậm khi hover */
+}
+
+.error-service {
+    color: red;  
+    padding: 10px;  
+    display: none;  
+}
+
+.title-rescue{
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .custom-popup-content {
+        width: 90%;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .input-box {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}

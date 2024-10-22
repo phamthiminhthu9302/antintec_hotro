@@ -12,17 +12,9 @@ class Service extends Model
     protected $primaryKey = 'service_id';
     protected $fillable = [
         'service_id',
-        'service_types_id',
         'name',
         'description',
         'price',
-        'latitude',
-        'longitude',
-        'photo',
-        'phone',
-        'address',
-        'timeopen',
-
     ];
 
     // Một dịch vụ có thể được sử dụng trong nhiều yêu cầu
@@ -31,9 +23,8 @@ class Service extends Model
         return $this->hasMany(Request::class, 'service_id');
     }
 
-    // Một dịch vụ liên kết với một loại dịch vụ
-    public function serviceType()
+    public function technicianServices()
     {
-        return $this->belongsTo(ServiceTypes::class, 'service_types_id');
+        return $this->hasMany(TechnicianService::class, 'service_id');
     }
 }

@@ -42,6 +42,7 @@
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="../assets/css/web-style.css" rel="stylesheet" />
   <link href="../css/app.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
@@ -102,6 +103,7 @@
         {{-- ({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script> --}} -->
   <script src="{{ asset('js/app.js') }}"></script>
   <script src="../assets/js/handleSearchMap.js"></script>
+  <script src="../assets/js/handleFormTechnician.js"></script>
 </body>
 
 </html>

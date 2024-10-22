@@ -101,45 +101,45 @@ class ShareDataViewServiceProvider extends ServiceProvider
 
 
                 $role = User::where('user_id', $user)->select('role')->first();
-                if ($role->role == 'customer') {
-                    $requests = DB::table('requests')
-                        ->where('customer_id', $user)
-                        ->where(function ($query) {
-                            $query->where('status', 'in_progress')
-                                ->orWhere('status', 'completed');
-                        })
-                        ->select('technician_id', 'request_id')
-                        ->get();
+                // if ($role->role === 'customer') {
+                //     $requests = DB::table('requests')
+                //         ->where('customer_id', $user)
+                //         ->where(function ($query) {
+                //             $query->where('status', 'in_progress')
+                //                 ->orWhere('status', 'completed');
+                //         })
+                //         ->select('technician_id', 'request_id')
+                //         ->get();
 
-                    foreach ($requests as $r) {
-                        $receiver_id = $r->technician_id;
-                        $receiver_name = User::where('user_id', $receiver_id)->select('username')->first();
-                        $results[] = [
-                            'request_id' => $r->request_id,
-                            'receiver_id' => $receiver_id,
-                            'receiver_name' => $receiver_name->username
-                        ];
-                    }
-                } else {
-                    $requests = DB::table('requests')
-                        ->where('technician_id', $user)
-                        ->where(function ($query) {
-                            $query->where('status', 'in_progress')
-                                ->orWhere('status', 'completed');
-                        })
-                        ->select('customer_id', 'request_id')
-                        ->get();
+                //     foreach ($requests as $r) {
+                //         $receiver_id = $r->technician_id;
+                //         $receiver_name = User::where('user_id', $receiver_id)->select('username')->first();
+                //         $results[] = [
+                //             'request_id' => $r->request_id,
+                //             'receiver_id' => $receiver_id,
+                //             'receiver_name' => $receiver_name->username
+                //         ];
+                //     }
+                // } else {
+                //     $requests = DB::table('requests')
+                //         ->where('technician_id', $user)
+                //         ->where(function ($query) {
+                //             $query->where('status', 'in_progress')
+                //                 ->orWhere('status', 'completed');
+                //         })
+                //         ->select('customer_id', 'request_id')
+                //         ->get();
 
-                    foreach ($requests as $r) {
-                        $receiver_id = $r->customer_id;
-                        $receiver_name = User::where('user_id', $receiver_id)->select('username')->first();
-                        $results[] = [
-                            'request_id' => $r->request_id,
-                            'receiver_id' => $receiver_id,
-                            'receiver_name' => $receiver_name->username
-                        ];
-                    }
-                }
+                //     foreach ($requests as $r) {
+                //         $receiver_id = $r->customer_id;
+                //         $receiver_name = User::where('user_id', $receiver_id)->select('username')->first();
+                //         $results[] = [
+                //             'request_id' => $r->request_id,
+                //             'receiver_id' => $receiver_id,
+                //             'receiver_name' => $receiver_name->username
+                //         ];
+                //     }
+                // }
 
 
                 // dd($people, $results, $notification);

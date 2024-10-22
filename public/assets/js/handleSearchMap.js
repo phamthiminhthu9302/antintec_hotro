@@ -1,9 +1,7 @@
 console.log("Map here!");
 
-// Khởi tạo bản đồ
 var map = L.map("map").setView([10.8231, 106.6297], 13); // Mặc định là HCM city
 
-// Thêm tile layer từ OpenStreetMap
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution:
@@ -14,70 +12,7 @@ let markers = [];
 let services = [];
 let userLat, userLon;
 let allServices = []; // Danh sách toàn bộ dịch vụ từ server
-let servicesWithinRadius = []; // Danh sách dịch vụ đã lọc theo bán kính 10km
-let nearbyServices = []; // Danh sách dịch vụ sau khi lọc theo loại hoặc giá
 
-async function fetchServices() {
-    try {
-        const response = await fetch("/getServices");
-        const services = await response.json();
-
-        // Lưu trữ dịch vụ vào mảng nearbyServices
-        allServices = services;
-
-        // Đợi getLocation() hoàn thành trước khi gọi displayServices
-        const location = await getLocation();
-        userLat = location.userLat;
-        userLon = location.userLon;
-
-        servicesWithinRadius = getNearbyServices(allServices, userLat, userLon);
-        displayServices(servicesWithinRadius, userLat, userLon); // Hiển thị dữ liệu lên form kèm vị trí
-        createPopupContent(servicesWithinRadius); // Tạo nội dung cho popup
-        handleEventItemService(servicesWithinRadius); // Xử lý khi click vào dịch vụ
-    } catch (error) {
-        console.error("Error:", error);
-    }
-}
-
-// fetch("/getServices")
-//     .then((response) => response.json())
-//     .then((data) => {
-//         services = data; // Lưu dữ liệu vào biến toàn cục
-//         displayServices(services); // Hiển thị dữ liệu lên form
-//         createPopupContent(services); //Tạo nội dung cho popup
-//         handleEventItemService(services); //Xử lý khi click vào dịch vụ
-//     })
-//     .catch((error) => console.error("Error:", error));
-
-function createPopupContent(services) {
-    return `
-            <li id='service-card' data-lat="${services.latitude}" data-lon="${services.longitude}">
-                <img class='location-photo' src='${services.photo}'/>
-                <div class='location-title'>
-                    <p class='location-title-text'>${services.name}</p><br>
-                </div>
-                <div class='location-address'>
-                <img class="Liguzb" src="https://www.gstatic.com/images/icons/material/system_gm/1x/place_gm_blue_24dp.png">
-                ${services.address}
-                </div>
-                <div class='location-address'>
-                <img class="icon-phone" src="https://w7.pngwing.com/pngs/915/706/png-transparent-blue-call-icon-dialer-android-google-play-telephone-phone-blue-text-telephone-call.png">
-                ${services.phone}
-                </div>
-                <div class='location-time'>
-                <img class="Liguzb" src="//fonts.gstatic.com/s/i/googlematerialicons/history/v12/gm_blue-24dp/1x/gm_history_gm_blue_24dp.png">
-                ${services.description}
-                </div>
-                <div class='location-desc'>
-                <img class="Liguzb" src="//www.gstatic.com/images/icons/material/system_gm/1x/verified_user_gm_blue_24dp.png">
-                <span class='location-desc-text'>Đã xác nhận </span>
-                </div>
-                <button>Đặt</button>
-                <hr>
-            </li>`;
-}
-
-//Hàm lấy vị trí hiện tại
 function getLocation() {
     console.log(">>>>getlocation");
 
@@ -87,20 +22,14 @@ function getLocation() {
                 function (position) {
                     const userLat = position.coords.latitude;
                     const userLon = position.coords.longitude;
+                    // console.log("User's location: ", userLat, userLon);
 
-                    console.log("User's location: ", userLat, userLon);
                     sendLocationToServer(userLat, userLon);
-                    // var circle = L.circle([userLat, userLon], {
-                    //     color: 'red',
-                    //     fillColor: '#f03',
-                    //     fillOpacity: 0.5,
-                    //     radius: 10
-                    //   }).addTo(map)
-                    // displayServices(services, userLat, userLon);
+                    getCurrentAddress(userLat, userLon);
                     resolve({ userLat, userLon });
                 },
                 function (error) {
-                    reject(error); // Xử lý khi xảy ra lỗi
+                    reject(error);
                 }
             );
         } else {
@@ -109,162 +38,207 @@ function getLocation() {
     });
 }
 
-function getNearbyServices(data, userLat, userLon) {
-    let radius = 10;
-    return data.filter((service) => {
-        const serviceLat = service.latitude;
-        const serviceLon = service.longitude;
-        const distance = haversineDistance(
-            userLat,
-            userLon,
-            serviceLat,
-            serviceLon
-        );
-        return distance <= radius;
+function getCurrentAddress(userLat, userLon) {
+    // console.log(">>>get current address");
+    var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}&zoom=18&addressdetails=1`;
+
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            // console.log("Phản hồi từ API:", data);
+            var display_name = data.display_name;
+            var addressParts = display_name.split(",").slice(0, -2);
+            var fullAddress = addressParts.join(",");
+            var latitude = data.lat;
+            var longitude = data.lon;
+
+            document.getElementById("location").value = fullAddress;
+            document.getElementById("latitude").value = parseFloat(latitude);
+            document.getElementById("longitude").value = parseFloat(longitude);
+        })
+        .catch((error) => {
+            console.error("Lỗi khi lấy địa chỉ:", error);
+        });
+}
+
+function displayListServices(allServices) {
+    console.log(">>>>displayListServices");
+    console.log("Initial data:", allServices);
+    const serviceList = document.getElementById("service-list");
+
+    // Kiểm tra xem data có phải là mảng và không rỗng hay không
+    if (!Array.isArray(allServices) || allServices.length === 0) {
+        // Nếu không có dữ liệu, hiển thị thông báo
+        serviceList.innerHTML = "Không tìm thấy dịch vụ nào.";
+        serviceList.classList.add("notification");
+        return;
+    }
+
+    allServices.forEach((service) => {
+        const listItemService = document.createElement("div");
+        listItemService.innerHTML = createItemService(service);
+        serviceList.appendChild(listItemService);
     });
 }
 
-// Hiển thị danh sách dịch vụ lên form
-function displayServices(data, userLat = null, userLon = null) {
-    console.log(">>>>displayServices");
-    const serviceList = document.getElementById("service-list");
-    serviceList.innerHTML = ""; // Xóa dữ liệu cũ trước khi thêm mới
+function createItemService(service) {
+    console.log(">>>>service", service);
+    const servicePrice = parseFloat(service.price);
+    const formattedPrice = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+    }).format(servicePrice);
 
-    // Xóa tất cả các marker cũ khỏi bản đồ
-    markers.forEach((marker) => map.removeLayer(marker));
-    markers = []; // Xóa dữ liệu marker cũ
-
-    if (userLat !== null && userLon !== null) {
-        console.log("Initial data:", data);
-        // servicesWithinRadius = getNearbyServices(data, userLat, userLon);
-        // console.log("Nearby services after filtering:", servicesWithinRadius);
-        if (data.length === 0) {
-            console.log("No services to display");
-            return; // Không có dịch vụ nào để hiển thị
-        }
-
-        // console.log(">>>servicesWithinRadius",servicesWithinRadius);
-
-        data.forEach((service) => {
-            // Tạo một marker cho mỗi dịch vụ
-            const marker = L.marker([
-                service.latitude,
-                service.longitude,
-            ]).addTo(map);
-
-            marker.bindPopup(createPopupContent(service));
-
-            // Thêm marker vào danh sách marker để dễ quản lý
-            markers.push(marker);
-
-            //Tạo cấu trúc cho danh sách dịch vụ trên form
-            const listItemService = document.createElement("div");
-            listItemService.innerHTML = createPopupContent(service);
-            serviceList.appendChild(listItemService);
-        });
-    }
-}
-
-// Hàm tính khoảng cách Haversine
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-        0.5 -
-        Math.cos(dLat) / 2 +
-        (Math.cos((lat1 * Math.PI) / 180) *
-            Math.cos((lat2 * Math.PI) / 180) *
-            (1 - Math.cos(dLon))) /
-            2;
-    return R * 2 * Math.asin(Math.sqrt(a));
+    return `<li id='service-card'>
+        <div class='location-title'>
+            <label>
+                <p class='location-title-service' data-serviceId="${service.service_id}">Dịch vụ: ${service.name}</p>
+            </label>
+        </div>
+        <div class='location-time'>
+            <p class='location-title-text'>Mô tả: ${service.description}</p>
+        </div>
+        <div class='location-technicianId' data-technicianId="${allServices.technician.technician_id}">
+            <p class='location-technician-name' data-technicianName="${allServices.technician.technician_name}"></p>
+        </div>
+        <div class='location-time'>
+            <p class='location-title-text'>Giá: <span class="formatted-price">${formattedPrice}</p>
+        </div>
+        <button>Đặt</button>
+        <hr>
+    </li>`;
 }
 
 // Biến để lưu marker hiện tại
 let currentMarker = null;
 
-function handleEventItemService(data) {
+function handleEventItemService(allServices) {
     document
         .getElementById("service-list")
         .addEventListener("click", function (event) {
             // Kiểm tra xem người dùng có click vào một phần tử LI không
             const listItem = event.target.closest("li");
+            // console.log(">>>>>listItem", listItem.children);
             if (listItem) {
-                const lat = parseFloat(listItem.getAttribute("data-lat"));
-                const lon = parseFloat(listItem.getAttribute("data-lon"));
-                // Cập nhật vị trí bản đồ mà không khởi tạo lại
-                map.setView([lat, lon], 19);
+                const serviceName = listItem.children[0].textContent
+                    .split(":")[1]
+                    .trim();
+                const servicePrice = listItem.children[3].textContent
+                    .split(":")[1]
+                    .trim()
+                    .replace("₫", "")
+                    .trim();
 
-                // Tìm dịch vụ được chọn từ danh sách data dựa trên lat và lon
-                const selectedService = data.find((service) => {
-                    return service.latitude == lat && service.longitude == lon;
-                });
+                const dataServiceId = document.querySelector(
+                    ".location-title-service"
+                );
+                const dataTechnician = document.querySelector(
+                    ".location-technician-name"
+                );
+                const dataTechnicianId = document.querySelector(
+                    ".location-technicianId"
+                );
 
-                // Nếu dịch vụ được chọn tồn tại
-                if (selectedService) {
-                    // Nếu marker đã tồn tại, chỉ cần cập nhật vị trí của nó
-                    if (currentMarker) {
-                        currentMarker.setLatLng([lat, lon]);
-                        currentMarker.bindPopup(
-                            createPopupContent(selectedService)
-                        );
-                    } else {
-                        currentMarker = L.marker([lat, lon])
-                            .addTo(map)
-                            .bindPopup(createPopupContent(selectedService));
-                    }
+                const serviceId = dataServiceId.getAttribute("data-serviceid");
+                const technicianName = dataTechnician.getAttribute(
+                    "data-technicianName"
+                );
+                const technicianId =
+                    dataTechnicianId.getAttribute("data-technicianId");
 
-                    // Mở popup
-                    currentMarker.openPopup();
-                }
+                document.getElementById("service_name").value = serviceName;
+                document.getElementById("service_price").value = servicePrice;
+                document.getElementById("technicianId").value = technicianName;
+                document.getElementById("technician_id").value =
+                    parseInt(technicianId);
+                document.getElementById("service_id").value =
+                    parseInt(serviceId);
+                document.getElementById("request-popup").style.display =
+                    "block";
             }
+        });
+
+    // Đóng popup khi nhấn nút "Đóng"
+    document
+        .getElementById("close-popup")
+        .addEventListener("click", function () {
+            document.getElementById("request-popup").style.display = "none";
         });
 }
 
+// Hiển thị popup và làm mờ nền
+function showPopup() {
+    document.getElementById("request-popup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+    document.body.classList.add("popup-active");
+}
+
+// Ẩn popup và bỏ làm mờ nền
+function hidePopup() {
+    document.getElementById("request-popup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+    document.body.classList.remove("popup-active");
+}
+
+document.getElementById("close-popup").addEventListener("click", hidePopup);
+
 function filterFormServices() {
-    const selectedPrice = document.getElementById("price").value;
-    const selectedService = document.getElementById("service-type").value;
+    const selectedPrice = document.getElementById("services_price").value;
+    const input = document.getElementById("service-type");
+    const filter = input.value.toLowerCase();
+    const serviceList = document.getElementById("service-list"); // Lấy danh sách dịch vụ
+    // Xóa nội dung danh sách dịch vụ cũ
+    serviceList.innerHTML = "";
 
-    if (typeof userLat === "undefined" || typeof userLon === "undefined") {
-        console.error("Địa chỉ người dùng không có sẵn!");
+    // Ẩn danh sách nếu không có từ khóa nhập
+    if (!filter && !selectedPrice) {
+        serviceList.style.display = "none";
         return;
     }
 
-    if (!servicesWithinRadius || servicesWithinRadius.length === 0) {
-        console.error("Không có dịch vụ nào gần đây!");
-        return;
+    let services = allServices.services;
+
+    let filteredServices = services.filter(
+        (service) => service.name.toLowerCase().includes(filter) // Lọc theo tên dịch vụ
+    );
+
+    // Nếu combobox giá đã được chọn, tiếp tục lọc theo giá
+    if (selectedPrice === "under_200k") {
+        filteredServices = filteredServices.filter(
+            (service) => parseFloat(service.price) < 200000
+        );
+    } else if (selectedPrice === "200k_to_500k") {
+        filteredServices = filteredServices.filter(
+            (service) =>
+                parseFloat(service.price) >= 200000 &&
+                parseFloat(service.price) <= 500000
+        );
+    } else if (selectedPrice === "over_500k") {
+        filteredServices = filteredServices.filter(
+            (service) => parseFloat(service.price) > 500000
+        );
     }
 
-    const servicesCopy = [...servicesWithinRadius];
-    const priceSelect = document.getElementById("price");
-
-    const filteredServices = servicesCopy.filter((service) => {
-        let matchPrice = true;
-        let matchServiceType = true;
-
-        if (selectedService) {
-            matchServiceType =
-                parseInt(selectedService) ===
-                parseInt(service.service_types_id);
-            priceSelect.disabled = false;
-            if (selectedPrice) {
-                matchPrice =
-                    parseFloat(selectedPrice) === parseFloat(service.price);
-            }
-        } else {
-            priceSelect.disabled = true;
-        }
-        return matchPrice && matchServiceType; // Trả về dịch vụ thỏa mãn cả hai điều kiện
-    });
-
-    // Kiểm tra rằng filteredServices không phải là một mảng rỗng
-    if (filteredServices.length > 0) {
-        // console.log(">>>>check filteredServices: ", filteredServices);
-        displayServices(filteredServices, userLat, userLon); // Hiển thị các dịch vụ đã lọc
+    // Hiển thị danh sách đã lọc
+    if (filteredServices.length === 0) {
+        serviceList.innerHTML =
+            "Không tìm thấy dịch vụ nào với các tiêu chí đã chọn";
+        serviceList.classList.add("error-service");  
+        serviceList.style.display = "block";  
     } else {
-        alert("Không tìm thấy dịch vụ nào với các tiêu chí đã chọn.");
+        serviceList.style.display = "block";  
+        displayListServices(filteredServices); 
     }
 }
+
+document
+    .getElementById("service-type")
+    .addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();  
+            filterFormServices(); 
+        }
+    });
 
 function sendLocationToServer(userLat, userLon) {
     // console.log(">>>sendLocationToServer", userLat, userLon);
@@ -292,24 +266,48 @@ function sendLocationToServer(userLat, userLon) {
             console.log(status);
         },
     });
+
+    $.ajax({
+        type: "POST",
+        url: "/getServices",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            id: userId,
+            role: role,
+            latitude: latitude,
+            longitude: longitude,
+        },
+        success: function (response) {
+            console.log("Update status response:", response);
+            console.log("Response services:", response.services);
+            allServices = response;
+            displayListServices(allServices);
+            handleEventItemService(allServices); // Xử lý khi click vào dịch vụ
+        },
+        error: function (xhr, status, error) {
+            console.log("Update status error:", status);
+        },
+    });
 }
+
 var technicianIcon = L.icon({
     iconUrl: "https://cdn-icons-png.flaticon.com/256/5025/5025140.png",
-    iconSize: [40, 40], // Kích thước icon
+    iconSize: [40, 40],
 });
 
 var customerIcon = L.icon({
     iconUrl:
         "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-    iconSize: [25, 41], // Kích thước icon
-    iconAnchor: [12, 41], // Vị trí neo icon
-    popupAnchor: [1, -34], // Vị trí hiển thị popup
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
 });
 
 function createMarker(userId, role, latitude, longitude) {
     var position = [latitude, longitude];
 
-    // Kiểm tra role và chọn icon tương ứng
     const icon = role === "technician" ? technicianIcon : customerIcon;
 
     var marker = L.marker(position, { icon: icon }).addTo(map);
@@ -322,40 +320,78 @@ var pusher = new Pusher("b5f44c6c2b7e9df067d7", {
 });
 
 var technicianMarkers = {};
+let technicianDistances = [];
 
 var channel = pusher.subscribe("technician-location");
 channel.bind("TechnicianLocationUpdated", function (data) {
-    // console.log("Technician location updated:", data);
-    // Cập nhật vị trí kỹ thuật viên trên bản đồ
+    console.log("->>>Technician location updated:", data);
     updateTechnicianMarker(data);
 });
 
 function updateTechnicianMarker(data) {
-    // console.log(">>>update");
-    var position = [data.latitude,  data.longitude];
+    console.log(">>>update");
+    var position = [data.latitude, data.longitude];
     const icon = technicianIcon;
 
     if (technicianMarkers[data.technicianId]) {
         technicianMarkers[data.technicianId].setLatLng(position);
     } else {
-        technicianMarkers[data.technicianId] = L.marker(position, { icon: icon }).addTo(map);
+        technicianMarkers[data.technicianId] = L.marker(position, {
+            icon: icon,
+        }).addTo(map);
     }
 }
 
-document.getElementById("service-type").addEventListener("change", function () {
-    filterFormServices();
-});
+document
+    .getElementById("services_price")
+    .addEventListener("change", function () {
+        filterFormServices();
+    });
 
-document.getElementById("price").addEventListener("change", function () {
-    filterFormServices();
-});
-
-document.getElementById("service-form").addEventListener("submit", function (event) {
+document
+    .getElementById("service-form")
+    .addEventListener("submit", function (event) {
         event.preventDefault();
         filterFormServices();
     });
 
+const formRequest = document.getElementById("request-form");
+formRequest.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("/save-request", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": document
+                .querySelector('meta[name="csrf-token"]')
+                .getAttribute("content"),
+        },
+        body: formData,
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(
+                    "Network response was not ok " + response.statusText
+                );
+            }
+            return response.json(); // Trả về JSON
+        })
+        .then((data) => {
+            console.log("Raw response from server:", data); // Kiểm tra phản hồi
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+});
+
+const submitButton = document.getElementById("btn-send-request");
+submitButton.addEventListener("click", function () {
+    document.getElementById("request-popup").style.display = "none";
+    alert("Vui lòng đợi kỹ thuật viên xử lý!"); 
+});
+
 window.onload = function () {
     getLocation();
-    fetchServices();
 };
