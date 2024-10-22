@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('technician_id')->constrained('users', 'user_id'); // Tham chiếu đến bảng users với vai trò là kỹ thuật viên
             $table->text('skills')->nullable(); // Kỹ năng của kỹ thuật viên (có thể là một chuỗi hoặc JSON)
             $table->text('certifications')->nullable(); // Chứng chỉ của kỹ thuật viên
-            $table->string('work_area', 255)->nullable(); // Khu vực làm việc của kỹ thuật viên (có thể là tên thành phố hoặc GPS)
+            $table->string('work_area', 255)->nullable();
+            $table->decimal('amount', 10, 2)->nullable(); // Khu vực làm việc của kỹ thuật viên (có thể là tên thành phố hoặc GPS)
             $table->timestamps();
         });
     }

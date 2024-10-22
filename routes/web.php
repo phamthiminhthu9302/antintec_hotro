@@ -42,10 +42,12 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/save-location', [DashboardUserController::class, 'savelocation']);
 	Route::get('/location-technicians', [DashboardUserController::class, 'getOnlineTechnicians']);
 	Route::post('/getServices', [DashboardUserController::class, 'filterServices']);
-	
-	Route::post('/billing', [BillingInfoController::class, 'insertUpdate']);
+
+	Route::post('/deposit', [BillingInfoController::class, 'createDeposit']);
+	Route::post('/deposit-update', [BillingInfoController::class, 'updateDeposit']);
+	Route::post('/billing', [BillingInfoController::class, 'createBilling']);
+	Route::post('/billing-update', [BillingInfoController::class, 'updateBilling']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
-	Route::patch('/billing', [BillingInfoController::class, 'update']);
 	Route::delete('/billing/{id}', [BillingInfoController::class, 'destroy']);
 
 	//profile
@@ -98,7 +100,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
 	Route::get('/dashboard/update/{request_id}/{status}', [RequestController::class, 'updateStatus']);
 	Route::get('/dashboard/read/{notification_id}', [RequestController::class, 'markAsRead']);
-	Route::post('/save-request',[RequestController::class, 'createRequest']);
+	Route::post('/save-request', [RequestController::class, 'createRequest']);
 	Route::get('/map', function () {
 		return view('map');
 	});
@@ -122,4 +124,4 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/login', function () {
 	return view('session/login-session');
 })->name('login');
-Route::patch('/requests/{id}',[RequestController::class,'updateDescription']);
+Route::patch('/requests/{id}', [RequestController::class, 'updateDescription']);
