@@ -30,6 +30,10 @@ class Kernel extends ConsoleKernel
         if(env('IS_DEMO')) {
             $schedule->command('migrate:fresh --seed')->cron($scheduledInterval);
         }
+
+        $schedule->call(function() {
+
+        });
     }
 
     /**

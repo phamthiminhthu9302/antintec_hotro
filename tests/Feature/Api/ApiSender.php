@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Api;
 
-
 use Tests\TestCase;
 
 class ApiSender extends TestCase
