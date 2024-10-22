@@ -32,16 +32,28 @@ class DashboardUserController extends Controller
 
         // Lấy danh sách kỹ thuật viên online trong vòng 5 phút
         $onlineTechnicians = DB::table('users as t')
-            ->join('locations as l', 't.user_id', '=', 'l.technician_id')
-            ->select(
-                't.user_id as technician_id',
-                't.username as technician_name',
-                'l.latitude',
-                'l.longitude',
-                'l.updated_at'
-            )
-            ->where('l.updated_at', '>=', Carbon::now()->subMinutes(5))  // Kiểm tra online trong vòng 5 phút
-            ->get();
+        ->join('locations as l', 't.user_id', '=', 'l.technician_id')
+        ->join('technician_availability as ta', 't.user_id', '=', 'ta.technician_id')
+        ->select(
+            't.user_id as technician_id',
+            't.username as technician_name',
+            'l.latitude',
+            'l.longitude',
+            'l.updated_at',
+            'ta.available_from',
+            'ta.available_to',
+            'ta.day_of_week'
+        )
+        ->where('l.updated_at', '>=', Carbon::now()->subMinutes(5)) // Kiểm tra online trong vòng 5 phút
+        ->where(function($query) {
+            $currentDay = Carbon::now()->format('l');  
+            $currentTime = Carbon::now()->format('H:i:s');  
+    
+            $query->where('ta.day_of_week', 'like', '%' . $currentDay . '%')  
+                  ->where('ta.available_from', '<=', $currentTime)  
+                  ->where('ta.available_to', '>=', $currentTime);  
+        })
+        ->get();
 
         $nearestTechnician = null;
         $shortestDistance = $maxDistance;

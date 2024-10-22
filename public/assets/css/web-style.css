@@ -365,7 +365,7 @@ p.location-title-text {
     left: 55%;
     width: 60%;
     max-width: 800px;
-    padding: 20px;
+    padding: 6px 12px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -425,27 +425,27 @@ textarea {
     width: 550px;
     padding: 10px 20px;
     margin-right: 10px;
+    margin-bottom: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
 #close-popup {
-    /* display: block; */
     width: 450px;
     height: 36px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #dc3545; /* Màu đỏ */
+    background-color: #dc3545; 
     color: white;
     cursor: pointer;
-    margin-left: 10px; /* Khoảng cách với nút gửi yêu cầu */
-    /* transition: background-color 0.3s; */
+    margin-left: 10px;  
+    margin-bottom: 5px;
 }
 
 .btn-close:hover {
-    background-color: #c82333; /* Màu đỏ đậm khi hover */
+    background-color: #c82333;  
 }
 
 .error-service {
