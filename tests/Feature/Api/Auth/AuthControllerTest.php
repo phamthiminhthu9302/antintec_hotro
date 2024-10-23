@@ -34,7 +34,7 @@ class AuthControllerTest extends ApiSender
             //'username' => 'unittest01',
             //'email' => 'test01@gmail.com',
             'password' => '12345678',
-            'phone' => '1111111111',
+            'phone' => '115',
         ];
         $response = $this->post('/api/check-login', $params);
         $responseData = $response->getContent();

@@ -69,4 +69,7 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
 
     Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
     Route::get("/technician/services", [TechnicianServiceController::class, "getTechnicianServices"]);
+    Route::post("/technician/services", [TechnicianServiceController::class, "createTechnicianService"]);
+    Route::put("/technician/services", [TechnicianServiceController::class, "updateTechnicianService"]);
+    Route::get("/technician/services/available", [TechnicianServiceController::class, "getAllAvailableTechniciansByServiceId"]);
 });
