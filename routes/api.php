@@ -63,9 +63,17 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::post('services/search', [ServicesController::class, 'searchServices']);
     Route::post('services/store', [ServicesController::class, 'store']);
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
+    Route::delete('services/find-10', [ServicesController::class, 'findNearService']);
 
     Route::apiResource('reviews', ReviewController::class);
    
     Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
+
+    Route::put('/profile/available', [ProfileController::class, 'TechAvailability']);
+    Route::put('/request/status', [RequestController::class, 'statusRequest']);
+    Route::put('/request/create', [RequestController::class, 'create']);
+
+
+
 
 });
