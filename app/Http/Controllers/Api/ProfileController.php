@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Payment;
+use App\Models\TechAvailability;
 
 class ProfileController extends Controller
 {
@@ -29,7 +30,6 @@ class ProfileController extends Controller
             'data' => $useData,
         ], 200);
     }
-
 
     //HUYNH-DUC-TAM
     use HttpResponses;
@@ -152,6 +152,30 @@ class ProfileController extends Controller
             'status' => false,
             'error' => 'User is not a technician.'
         ], 403);
+    }
+
+    public function TechAvailability(Request $request){
+
+        $request->validate([
+            'available_from' => 'required|date_format:H:i',
+            'available_to' => 'required|date_format:H:i|after:available_from',
+            'day_of_week' => 'nullable|array|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+        ]);
+
+        $useData = auth()->user();
+
+        $technician_id = $useData->user_id;
+
+        $tech_available = TechAvailability::updateOrCreate(
+            ['technician_id' => $technician_id],
+            [
+                'available_from' => $request->available_from,
+                'available_to' => $request->available_to,
+                'day_of_week' => json_encode($request->day_of_week),
+            ],
+        );
+
+        return $this->message('Update Available Information success');
     }
 
 }

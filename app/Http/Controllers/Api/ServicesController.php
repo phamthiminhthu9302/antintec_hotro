@@ -72,4 +72,18 @@ class ServicesController extends Controller
             return $this->message(['error ' . $e->getMessage()], 500);
         }
     }
+
+    public function findNearService($latitude, $longitude, $radius = 10){
+
+        $distance = '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude))))  AS distance';
+
+        $locations = DB::table('locations')
+        ->select('technician_id', 'latitude', 'longitude')
+        ->selectRaw($distance, [$latitude, $longitude, $latitude])
+        ->having('distance', '<=', $radius) 
+        ->orderBy('distance', 'asc') 
+        ->get();
+
+        return $this->success($locations);
+    }
 }
