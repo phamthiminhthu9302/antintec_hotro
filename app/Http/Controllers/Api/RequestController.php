@@ -17,7 +17,7 @@ class RequestController extends Controller
 {
     use HttpResponses;
 
-    public function createRequest(Request $request): JsonResponse
+    public function createRequest(HttpRequest $request): JsonResponse
     {
         $user = auth()->user();
         $validated = $request->validate([
@@ -82,7 +82,7 @@ class RequestController extends Controller
         return $this->success($userRequest);
     }
 
-    public function updateReadNotification(Request $request): JsonResponse
+    public function updateReadNotification(HttpRequest $request): JsonResponse
     {
         $user = auth()->user();
         $validated = $request->validate([
@@ -97,7 +97,7 @@ class RequestController extends Controller
         }
         return $this->fail("Invalid user");
     }
-    public function updateDescription(Request $request,$id):JsonResponse{
+    public function updateDescription(HttpRequest $request,$id):JsonResponse{
         $model = \App\Models\Request::find($id);
         $data = $model->description."\n".Carbon::now()->toDateTimeString().' (KTV): '.$request->description;
         if(!$model)
