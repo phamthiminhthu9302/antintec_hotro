@@ -34,7 +34,7 @@
   <title>
     antintec_hotro
   </title>
-   <!--     CDN MAPBOX     -->
+  <!--     CDN MAPBOX     -->
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
   <!--     Fonts and icons     -->
@@ -42,6 +42,7 @@
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="../assets/css/web-style.css" rel="stylesheet" />
   <link href="../css/app.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
@@ -64,14 +65,7 @@
   @yield('guest')
   @endguest
 
-  @if(session()->has('success'))
-  <div x-data="{ show: true}"
-    x-init="setTimeout(() => show = false, 4000)"
-    x-show="show"
-    class="position-fixed bg-success rounded right-3 text-sm py-2 px-4">
-    <p class="m-0">{{ session('success')}}</p>
-  </div>
-  @endif
+
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
@@ -102,6 +96,7 @@
         {{-- ({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script> --}} -->
   <script src="{{ asset('js/app.js') }}"></script>
   <script src="../assets/js/handleSearchMap.js"></script>
+  <script src="../assets/js/handleFormTechnician.js"></script>
 </body>
 
 </html>

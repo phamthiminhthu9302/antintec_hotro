@@ -15,6 +15,7 @@ use App\Http\Controllers\RequestsController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\testController;
 use App\Models\BillingInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -37,16 +38,16 @@ use App\Models\TechnicianDetail;
 Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
-	Route::get('/dashboard', [DashboardUserController::class, 'getServiceTypes'])->name('dashboard');
-	// Route::get('/dashboard/{id}',function(){
-	// 	event(new TechnicianLocationUpdated(8.713577,106.619327));
-	// });
+	Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('dashboard');
 	Route::post('/save-location', [DashboardUserController::class, 'savelocation']);
-	Route::get('/getServices', [DashboardUserController::class, 'getAllServices']);
-	
-	Route::post('/billing', [BillingInfoController::class, 'insertUpdate']);
+	Route::get('/location-technicians', [DashboardUserController::class, 'getOnlineTechnicians']);
+	Route::post('/getServices', [DashboardUserController::class, 'filterServices']);
+
+	Route::post('/deposit', [BillingInfoController::class, 'createDeposit']);
+	Route::post('/deposit-update', [BillingInfoController::class, 'updateDeposit']);
+	Route::post('/billing', [BillingInfoController::class, 'createBilling']);
+	Route::post('/billing-update', [BillingInfoController::class, 'updateBilling']);
 	Route::get('/billing', [BillingInfoController::class, 'index']);
-	Route::patch('/billing', [BillingInfoController::class, 'update']);
 	Route::delete('/billing/{id}', [BillingInfoController::class, 'destroy']);
 
 	//profile
@@ -81,6 +82,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile/update', [InfoUserController::class, 'create']);
 	Route::post('/user-profile/update', [InfoUserController::class, 'store']);
+	Route::post('/technician-service', [InfoUserController::class, 'technicianService']);
+	Route::delete('/technician-service/{id}', [InfoUserController::class, 'deleteTechnicianService']);
 	Route::get('/user-profile/location', [InfoUserController::class, 'location']);
 	Route::post('/location/add', [InfoUserController::class, 'AddLocation']);
 	Route::get('/login', function () {
@@ -94,9 +97,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard/get/{request_id}/{receiver_id}', [ChatController::class, 'getMessages'])->name('chat.messages');
 	Route::match(['get', 'post'], '/dashboard/seen/{messageIds}', [ChatController::class, 'markAsSeen'])->name('markAsSeen');
 	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
+	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
 	Route::get('/dashboard/update/{request_id}/{status}', [RequestController::class, 'updateStatus']);
 	Route::get('/dashboard/read/{notification_id}', [RequestController::class, 'markAsRead']);
-	Route::get('/dashboard/usercurrent', [ChatController::class, 'getUserCurrent']);
+	Route::post('/save-request', [RequestController::class, 'createRequest']);
 	Route::get('/map', function () {
 		return view('map');
 	});
@@ -120,3 +124,4 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/login', function () {
 	return view('session/login-session');
 })->name('login');
+Route::patch('/requests/{id}', [RequestController::class, 'updateDescription']);

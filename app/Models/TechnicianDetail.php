@@ -15,7 +15,8 @@ class TechnicianDetail extends Model
         'technician_id',
         'skills',
         'certifications',
-        'work_area'
+        'work_area',
+        'amount'
     ];
     // Thông tin chi tiết kỹ thuật viên thuộc về một kỹ thuật viên
     public function technician()

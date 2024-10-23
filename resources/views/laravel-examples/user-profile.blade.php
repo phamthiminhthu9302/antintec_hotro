@@ -148,6 +148,7 @@
                         </div>
                     </div>
                     <div class="row">
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="user.phone" class="form-control-label">{{ __('Phone') }}</label>
@@ -173,7 +174,6 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('Skills') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-
                                     <input class="form-control" type="text" placeholder="Skills" id="skills" name="skills" value="{{($usersWithTechnicianDetails->skills ?? '')}}">
                                 </div>
                             </div>
@@ -213,29 +213,98 @@
                                         @endif
                                         <input class="form-control" type="time" id="available_from" name="available_from" value="{{($usersWithTechnicianDetails->available_from ?? '')}}">
                                         <input class="form-control" type="time" id="available_to" name="available_to" value="{{($usersWithTechnicianDetails->available_to ?? '')}}">
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        @endif
-                        @endif
-                    </div>
-                    {{-- <div class="form-group">
-                        <label for="about">{{ 'About Me' }}</label>
-                    <div class="@error('user.about')border border-danger rounded-3 @enderror">
-                        <textarea class="form-control" id="about" rows="3" placeholder="Say something about yourself" name="about_me">{{ auth()->user()->about_me }}</textarea>
-                    </div>
-            </div> --}}
-            <div class="d-flex justify-content-end">
-                {{-- <a href="/user-profile/location" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Choose address' }}</a> --}}
-                <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
-            </div>
-            </form>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card mb-4 mx-4">
+                                    <div class="card-header pb-0 text-center">
+                                        <div class="d-flex flex-row align-items-center" style="gap:16px ;justify-content: center">
+                                            <div class="h5-flex" style="position: relative;top: 62px;right: 36px">
+                                                <h5 class="header-text">Add skill: </h5>
+                                            </div>
+                                            <div class="d-flex mt-3">
+                                                @csrf
+                                                <div class="add-skill-container">
+                                                    <div class="mb-3">
+                                                        <label for="technician_id">Technician:</label>
+                                                        <input type="hidden" id="technician_id" name="technician_id" value="{{ auth()->user()->user_id }}">
+                                                        <input type="text" value="{{ auth()->user()->username }} ({{ auth()->user()->user_id }})" readonly>
+                                                    </div>
 
+                                                    <div class="mb-3" style="margin: 4px!important">
+                                                        <label for="service_id" class="form-label">Select Skill (Service)</label>
+                                                        <select id="service_id" class="form-select" name="service_id" required>
+                                                            <option selected disabled>Choose Service</option>
+                                                            @foreach($services as $service)
+                                                            <option value="{{ $service->service_id }}">{{ $service->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <button id="add-skill" type="button" class="btn btn-primary">Add Skill</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body px-0 pt-0 pb-2">
+                                            <div class="table-responsive p-0">
+                                                <table class="table align-items-center mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Technician ID</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Technician Name</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Service Name</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($technicians as $technician)
+                                                        <tr>
+                                                            <td class="ps-4">
+                                                                <p class="text-xs font-weight-bold mb-0">{{ $technician->user_id }}</p>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <p class="text-xs font-weight-bold mb-0">{{ $technician->technician_name }}</p>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <p class="text-xs font-weight-bold mb-0">{{ $technician->service_name }}</p>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <p class="text-xs font-weight-bold mb-0">{{ number_format($technician->service_price, 0) }} VND</p>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="cursor-pointer text-secondary text-xs font-weight-bold" onclick="deleteService('{{  $technician->service_id }}')">
+                                                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            @endif
+                        </div>
+                        {{-- <div class="form-group">
+                        <label for="about">{{ 'About Me' }}</label>
+                        <div class="@error('user.about')border border-danger rounded-3 @enderror">
+                            <textarea class="form-control" id="about" rows="3" placeholder="Say something about yourself" name="about_me">{{ auth()->user()->about_me }}</textarea>
+                        </div>
+                    </div> --}}
+                    <div class="d-flex justify-content-end">
+                        {{-- <a href="/user-profile/location" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Choose address' }}</a> --}}
+                        <button id="save changes" type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </div>
 @endsection
