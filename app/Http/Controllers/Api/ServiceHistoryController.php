@@ -37,9 +37,12 @@ class ServiceHistoryController extends Controller
 
     private function serviceHistory($role, $userId)
     {
-
         //FROM REQUEST CALL TO SERVICE, FROM SERVICE CALL TO SERVICE_TYPE
-        return \App\Models\Request::where($role, $userId)->orderByDesc('created_at')->with('service.serviceType')->get();
+        return \App\Models\Request::where($role, $userId)
+            ->orderByDesc('created_at')
+            //->with('service.serviceType')
+                ->with('service')
+            ->get();
 
     }
 

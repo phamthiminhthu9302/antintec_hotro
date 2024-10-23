@@ -4,9 +4,10 @@ namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Api\ApiSender;
 use Tests\TestCase;
 
-class AuthControllerTest extends TestCase
+class AuthControllerTest extends ApiSender
 {
     /**
      * A basic feature test example.
@@ -14,17 +15,16 @@ class AuthControllerTest extends TestCase
     public function test_register(): void
     {
         $params = [
-            'username' => 'unittest02',
-            'email' => 'unittest02@gmail.com',
+            'username' => 'unittest03',
+            'email' => 'unittest03@gmail.com',
             'password' => '12345678',
             'password_confirmation' => '12345678',
-            'phone' => '113',
+            'phone' => '115',
             'address' => '192 Lầu 2 Huỳnh Mẫn Đạt',
             'role' => 'customer'];
 
-        $response = $this->post('/api/register', $params);
-
-        dump($response->getContent());
+        $response = $this->sendApi('POST', '/api/register', $params, null);
+        echo $response->getContent();
         $response->assertStatus(200);
     }
 

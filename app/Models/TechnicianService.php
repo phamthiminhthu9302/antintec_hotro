@@ -11,7 +11,7 @@ class TechnicianService extends Model
 
     protected $table = 'technician_service';
 
-    protected $fillable = ['technician_id', 'service_id'];
+    protected $fillable = ['technician_id', 'service_id', 'status', 'available_from', 'available_to'];
 
     public function technician()
     {
