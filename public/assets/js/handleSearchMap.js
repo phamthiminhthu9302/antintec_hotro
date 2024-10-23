@@ -223,11 +223,11 @@ function filterFormServices() {
     if (filteredServices.length === 0) {
         serviceList.innerHTML =
             "Không tìm thấy dịch vụ nào với các tiêu chí đã chọn";
-        serviceList.classList.add("error-service");  
-        serviceList.style.display = "block";  
+        serviceList.classList.add("error-service");
+        serviceList.style.display = "block";
     } else {
-        serviceList.style.display = "block";  
-        displayListServices(filteredServices); 
+        serviceList.style.display = "block";
+        displayListServices(filteredServices);
     }
 }
 
@@ -235,8 +235,8 @@ document
     .getElementById("service-type")
     .addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
-            event.preventDefault();  
-            filterFormServices(); 
+            event.preventDefault();
+            filterFormServices();
         }
     });
 
@@ -266,30 +266,18 @@ function sendLocationToServer(userLat, userLon) {
             console.log(status);
         },
     });
-
-    $.ajax({
-        type: "POST",
-        url: "/getServices",
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-        },
-        data: {
-            id: userId,
-            role: role,
-            latitude: latitude,
-            longitude: longitude,
-        },
-        success: function (response) {
+    var id = userId;
+    axios.post(`/getServices/${id}/${role}/${latitude}/${longitude}`)
+        .then(async response => {
             console.log("Update status response:", response);
-            console.log("Response services:", response.services);
-            allServices = response;
+            console.log("Response services:", response.data.services);
+            allServices = response.data;
             displayListServices(allServices);
             handleEventItemService(allServices); // Xử lý khi click vào dịch vụ
-        },
-        error: function (xhr, status, error) {
+        }).catch(error => {
             console.log("Update status error:", status);
-        },
-    });
+        });
+
 }
 
 var technicianIcon = L.icon({
@@ -322,8 +310,8 @@ var pusher = new Pusher("b5f44c6c2b7e9df067d7", {
 var technicianMarkers = {};
 let technicianDistances = [];
 
-var channel = pusher.subscribe("technician-location");
-channel.bind("TechnicianLocationUpdated", function (data) {
+var channeltechnician_location = pusher1.subscribe("technician-location");
+channeltechnician_location.bind("TechnicianLocationUpdated", function (data) {
     console.log("->>>Technician location updated:", data);
     updateTechnicianMarker(data);
 });
@@ -389,7 +377,7 @@ formRequest.addEventListener("submit", function (e) {
 const submitButton = document.getElementById("btn-send-request");
 submitButton.addEventListener("click", function () {
     document.getElementById("request-popup").style.display = "none";
-    alert("Vui lòng đợi kỹ thuật viên xử lý!"); 
+    alert("Vui lòng đợi kỹ thuật viên xử lý!");
 });
 
 window.onload = function () {

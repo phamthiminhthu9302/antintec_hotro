@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('dashboard');
 	Route::post('/save-location', [DashboardUserController::class, 'savelocation']);
 	Route::get('/location-technicians', [DashboardUserController::class, 'getOnlineTechnicians']);
-	Route::post('/getServices', [DashboardUserController::class, 'filterServices']);
+	Route::match(['get', 'post'], '/getServices/{id}/{role}/{latitude}/{longitude}', [DashboardUserController::class, 'filterServices']);
 
 	Route::post('/deposit', [BillingInfoController::class, 'createDeposit']);
 	Route::post('/deposit-update', [BillingInfoController::class, 'updateDeposit']);

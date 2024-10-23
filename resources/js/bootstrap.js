@@ -20,12 +20,12 @@ import Echo from 'laravel-echo';
 
 window.Pusher = require('pusher-js');
 
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     forceTLS: true
-// });
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: process.env.MIX_PUSHER_APP_KEY,
+  cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+  forceTLS: true
+});
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -34,4 +34,4 @@ window.Pusher = require('pusher-js');
  */
 
 import './echo';
->>>>>>> c1bb116653537792eae59ab5651581022f0cee85
+

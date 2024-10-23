@@ -17,14 +17,14 @@ class DashboardUserController extends Controller
 {
     public function index()
     {
-        
+
         return view('dashboard');
     }
 
     public function filterServices(Request $request)
     {
-        $customerLat = $request->input('latitude');
-        $customerLon = $request->input('longitude');
+        $customerLat = $request->latitude;
+        $customerLon = $request->longitude;
 
         $customerLat = (float) $customerLat;
         $customerLon = (float) $customerLon;
@@ -32,40 +32,40 @@ class DashboardUserController extends Controller
 
         // Lấy danh sách kỹ thuật viên online trong vòng 5 phút
         $onlineTechnicians = DB::table('users as t')
-        ->join('locations as l', 't.user_id', '=', 'l.technician_id')
-        ->join('technician_availability as ta', 't.user_id', '=', 'ta.technician_id')
-        ->select(
-            't.user_id as technician_id',
-            't.username as technician_name',
-            'l.latitude',
-            'l.longitude',
-            'l.updated_at',
-            'ta.available_from',
-            'ta.available_to',
-            'ta.day_of_week'
-        )
-        ->where('l.updated_at', '>=', Carbon::now()->subMinutes(5)) // Kiểm tra online trong vòng 5 phút
-        ->where(function($query) {
-            $currentDay = Carbon::now()->format('l');  
-            $currentTime = Carbon::now()->format('H:i:s');  
-    
-            $query->where('ta.day_of_week', 'like', '%' . $currentDay . '%')  
-                  ->where('ta.available_from', '<=', $currentTime)  
-                  ->where('ta.available_to', '>=', $currentTime);  
-        })
-        ->get();
+            ->join('locations as l', 't.user_id', '=', 'l.technician_id')
+            ->join('technician_availability as ta', 't.user_id', '=', 'ta.technician_id')
+            ->select(
+                't.user_id as technician_id',
+                't.username as technician_name',
+                'l.latitude',
+                'l.longitude',
+                'l.updated_at',
+                'ta.available_from',
+                'ta.available_to',
+                'ta.day_of_week'
+            )
+            ->where('l.updated_at', '>=', Carbon::now()->subMinutes(5)) // Kiểm tra online trong vòng 5 phút
+            ->where(function ($query) {
+                $currentDay = Carbon::now()->format('l');
+                $currentTime = Carbon::now()->format('H:i:s');
+
+                $query->where('ta.day_of_week', 'like', '%' . $currentDay . '%')
+                    ->where('ta.available_from', '<=', $currentTime)
+                    ->where('ta.available_to', '>=', $currentTime);
+            })
+            ->get();
 
         $nearestTechnician = null;
         $shortestDistance = $maxDistance;
 
         foreach ($onlineTechnicians as $technician) {
             $distance = $this->haversineDistance($customerLat, $customerLon, $technician->latitude, $technician->longitude);
+
             if ($distance <= $shortestDistance) {
                 $nearestTechnician = $technician;
                 $shortestDistance = $distance;
             }
         }
-
         if ($nearestTechnician) {
             // Lấy tất cả dịch vụ của kỹ thuật viên gần nhất
             $technicianServices = DB::table('technician_service as ts')
@@ -73,7 +73,7 @@ class DashboardUserController extends Controller
                 ->select('s.service_id', 's.name', 's.description', 's.price')
                 ->where('ts.technician_id', '=', $nearestTechnician->technician_id)
                 ->get();
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Tìm thấy kĩ thuật viên trong vòng bán kính 10km',
