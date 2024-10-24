@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\RequestController;
 use App\Http\Controllers\Api\ServiceHistoryController;
 use App\Http\Controllers\Api\ServicesController;
 use App\Http\Controllers\api\ReviewController;
+use App\Http\Controllers\Api\TechnicianServiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,7 +66,10 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
 
     Route::apiResource('reviews', ReviewController::class);
-   
-    Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
 
+    Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
+    Route::get("/technician/services", [TechnicianServiceController::class, "getTechnicianServices"]);
+    Route::post("/technician/services", [TechnicianServiceController::class, "createTechnicianService"]);
+    Route::put("/technician/services", [TechnicianServiceController::class, "updateTechnicianService"]);
+    Route::get("/technician/services/available", [TechnicianServiceController::class, "getAllAvailableTechniciansByServiceId"]);
 });

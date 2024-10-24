@@ -171,6 +171,66 @@ function hidePopup() {
     document.body.classList.remove("popup-active");
 }
 
+document.getElementById("close-popup").addEventListener("click", hidePopup);
+
+function filterFormServices() {
+    const selectedPrice = document.getElementById("services_price").value;
+    const input = document.getElementById("service-type");
+    const filter = input.value.toLowerCase();
+    const serviceList = document.getElementById("service-list"); // Lấy danh sách dịch vụ
+    // Xóa nội dung danh sách dịch vụ cũ
+    serviceList.innerHTML = "";
+
+    // Ẩn danh sách nếu không có từ khóa nhập
+    if (!filter && !selectedPrice) {
+        serviceList.style.display = "none";
+        return;
+    }
+
+    let services = allServices.services;
+
+    let filteredServices = services.filter(
+        (service) => service.name.toLowerCase().includes(filter) // Lọc theo tên dịch vụ
+    );
+
+    // Nếu combobox giá đã được chọn, tiếp tục lọc theo giá
+    if (selectedPrice === "under_200k") {
+        filteredServices = filteredServices.filter(
+            (service) => parseFloat(service.price) < 200000
+        );
+    } else if (selectedPrice === "200k_to_500k") {
+        filteredServices = filteredServices.filter(
+            (service) =>
+                parseFloat(service.price) >= 200000 &&
+                parseFloat(service.price) <= 500000
+        );
+    } else if (selectedPrice === "over_500k") {
+        filteredServices = filteredServices.filter(
+            (service) => parseFloat(service.price) > 500000
+        );
+    }
+
+    // Hiển thị danh sách đã lọc
+    if (filteredServices.length === 0) {
+        serviceList.innerHTML =
+            "Không tìm thấy dịch vụ nào với các tiêu chí đã chọn";
+        serviceList.classList.add("error-service");
+        serviceList.style.display = "block";
+    } else {
+        serviceList.style.display = "block";
+        displayListServices(filteredServices);
+    }
+}
+
+document
+    .getElementById("service-type")
+    .addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            filterFormServices();
+        }
+    });
+
 function sendLocationToServer(userLat, userLon) {
     // console.log(">>>sendLocationToServer", userLat, userLon);
     var latitude = userLat;
@@ -240,6 +300,18 @@ function sendFormService(latitude, longitude) {
                 console.error("Error:", error);
             });
     });
+    var id = userId;
+    axios.post(`/getServices/${id}/${role}/${latitude}/${longitude}`)
+        .then(async response => {
+            console.log("Update status response:", response);
+            console.log("Response services:", response.data.services);
+            allServices = response.data;
+            displayListServices(allServices);
+            handleEventItemService(allServices); // Xử lý khi click vào dịch vụ
+        }).catch(error => {
+            console.log("Update status error:", status);
+        });
+
 }
 
 var technicianIcon = L.icon({
@@ -272,8 +344,8 @@ var pusher = new Pusher("b5f44c6c2b7e9df067d7", {
 var technicianMarkers = {};
 let technicianDistances = [];
 
-var channel = pusher.subscribe("technician-location");
-channel.bind("TechnicianLocationUpdated", function (data) {
+var channeltechnician_location = pusher1.subscribe("technician-location");
+channeltechnician_location.bind("TechnicianLocationUpdated", function (data) {
     console.log("->>>Technician location updated:", data);
     updateTechnicianMarker(data);
 });

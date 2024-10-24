@@ -21,7 +21,7 @@ function formatTime(timestamp) {
   }
 }
 Pusher.logToConsole = true;
-var pusher = new Pusher('f833ed006b07e2964bfd', {
+var pusher1 = new Pusher('f833ed006b07e2964bfd', {
   cluster: 'ap1'
 });
 function closeChatBox() {
@@ -173,7 +173,7 @@ if (document.getElementById('chat-form')) {
   });
 }
 if (!channel) {
-  var channel = pusher.subscribe('my-channel');
+  var channel = pusher1.subscribe('my-channel');
   channel.bind('my-event', function (data) {
     var user = document.getElementById('user_curent');
     const chatBox = document.getElementById('chatBox');
@@ -195,7 +195,7 @@ if (!channel) {
   });
 }
 dayjs.extend(window.dayjs_plugin_relativeTime);
-var channel = pusher.subscribe('people-message');
+var channel = pusher1.subscribe('people-message');
 channel.bind('my-event-people', function (data) {
   const results = data.results;
   const messages = data.message;
@@ -439,7 +439,7 @@ function Notification(notification) {
     });
 }
 if (!channelnotification) {
-  var channelnotification = pusher.subscribe('channel-request');
+  var channelnotification = pusher1.subscribe('channel-request');
   channelnotification.bind('my-event-request', function (data) {
     if (document.getElementById('remove-notification')) {
       document.getElementById('remove-notification').innerHTML = '';

@@ -71,7 +71,6 @@ class DashboardUserController extends Controller
                 })
                 ->get();
 
-            // dd($technicians);
 
             // Lọc kỹ thuật viên theo khoảng cách 10km
             $filteredTechnicians = $technicians->filter(function ($technician) use ($customerLat, $customerLon) {
