@@ -30,11 +30,15 @@ class AuthControllerTest extends ApiSender
 
     public function test_login_Success(): void
     {
+
+        //samples data:
+        //'username' => 'Elwin Bartoletti', username' => 'Dr. Lula Goodwin',
+        //password' => '1234567890',
         $params = [
-            //'username' => 'unittest01',
+            'username' => 'Dr. Lula Goodwin',
             //'email' => 'test01@gmail.com',
-            'password' => '12345678',
-            'phone' => '1111111111',
+            'password' => '1234567890',
+            //'phone' => '1111111111',
         ];
         $response = $this->post('/api/check-login', $params);
         $responseData = $response->getContent();

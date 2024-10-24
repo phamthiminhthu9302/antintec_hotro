@@ -31,7 +31,6 @@ class ProfileController extends Controller
         ], 200);
     }
 
-    //HUYNH-DUC-TAM
     use HttpResponses;
 
 
@@ -100,7 +99,7 @@ class ProfileController extends Controller
 
     public function updatePaymentMethod(Request $request): JsonResponse
     {
-        $validated = request()->validate([
+        $validated = $request->validate([
             'request_id' => ['required', 'numeric', 'min:1'],
             'payment_method' => ['required', Rule::in('cash', 'credit_card', 'e_wallet')],
         ], ['payment_method.in' => 'Payment method must be in [cash, credit_card, e_wallet]']);

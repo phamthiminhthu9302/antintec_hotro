@@ -22,7 +22,7 @@ class ChatController extends Controller
                 ->orderByDesc('created_at')->get();
             if ($result->count() == 0) {
                 return $this->fail('Not contain message between sender id ' . $user->user_id
-                    . ' and receiver id ' . $validated['receiver_id']);
+                    . ' and receiver id ' . $validated['receiver_id'], 404);
             }
             return $this->success($result);
         } catch (\Throwable $th) {
@@ -36,7 +36,7 @@ class ChatController extends Controller
         if ($isAdmin) {
             $result = Message::where('sender_id', '=', $id)->orderByDesc('created_at')->get();
             if ($result->count() == 0) {
-                return $this->fail('Not contain message with sender id ' . $id);
+                return $this->fail('Not contain message with sender id ' . $id, 404);
             }
             return $this->success($result);
         }

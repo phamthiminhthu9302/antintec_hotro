@@ -17,7 +17,7 @@ class RequestController extends Controller
     public function createRequest(Request $request)
     {
         try {
-            
+            dd($request);
             $request->validate([
                 'customer_id' => 'required|integer',
                 'technician_id' => 'required|integer',

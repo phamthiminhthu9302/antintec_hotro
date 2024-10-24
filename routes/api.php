@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RequestController;
 use App\Http\Controllers\Api\ServiceHistoryController;
@@ -51,7 +52,7 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
 
     Route::post('/requests', [RequestController::class, 'createRequest']);
     Route::put('/requests/status', [RequestController::class, 'updateRequestStatus']);
-    Route::put('/requests/read', [RequestController::class, 'updateReadNotification']);
+    Route::put('/notifications/read', [NotificationController::class, 'updateReadNotification']);
 
     Route::get('/location', [LocationController::class, 'getLocation']);
     Route::post('/location/add', [LocationController::class, 'createLocation']);
@@ -69,4 +70,8 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
 
     Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
     Route::get("/technician/services", [TechnicianServiceController::class, "getTechnicianServices"]);
+    Route::post("/technician/services", [TechnicianServiceController::class, "createTechnicianService"]);
+    Route::put("/technician/services", [TechnicianServiceController::class, "updateTechnicianService"]);
+    Route::get("/technician/services/available", [TechnicianServiceController::class, "getAllAvailableTechniciansByServiceId"]);
+    Route::get('/notifications', [NotificationController::class, "getAllNotificationsByCustomerId"]);
 });

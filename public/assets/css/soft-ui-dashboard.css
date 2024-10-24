@@ -3691,10 +3691,11 @@ fieldset:disabled .btn {
     margin: 0;
     min-width: 11rem;
     padding: 0.5rem 0;
-    position: absolute;
+    position: relative;
     text-align: left;
     z-index: 1000;
 }
+
 .dropdown-menu[data-bs-popper] {
     left: 0;
     margin-top: 1.625rem;

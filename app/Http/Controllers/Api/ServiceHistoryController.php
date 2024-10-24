@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ServiceHistoryController extends Controller
 {
     use HttpResponses;
 
-    public function showRequestHistoryByToken()
+    public function showRequestHistoryByToken() : JsonResponse
     {
         $user = auth()->user();
         try {
@@ -20,7 +21,7 @@ class ServiceHistoryController extends Controller
         }
     }
 
-    public function showRequestHistoryByAdmin(Request $request, $userId)
+    public function showRequestHistoryByAdmin(Request $request, $userId) : JsonResponse
     {
         $isAdmin = $request->user()->tokenCan('admin');
         if ($isAdmin) {

@@ -38,9 +38,10 @@ use App\Models\TechnicianDetail;
 Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
-	Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('dashboard');
+	Route::get('/dashboard', [DashboardUserController::class, 'getAllServices'])->name('dashboard');
 	Route::post('/save-location', [DashboardUserController::class, 'savelocation']);
 	Route::get('/location-technicians', [DashboardUserController::class, 'getOnlineTechnicians']);
+	Route::post('/filterServices', [DashboardUserController::class, 'filterServices']);
 	Route::match(['get', 'post'], '/getServices/{id}/{role}/{latitude}/{longitude}', [DashboardUserController::class, 'filterServices']);
 
 	Route::post('/deposit', [BillingInfoController::class, 'createDeposit']);
