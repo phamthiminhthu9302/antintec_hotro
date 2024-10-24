@@ -64,8 +64,9 @@ function getCurrentAddress(userLat, userLon) {
 function displayListServices(allServices) {
     console.log(">>>>displayListServices");
     console.log("Initial data:", allServices);
+    // console.log("check allServices:", typeof allServices);
     const serviceList = document.getElementById("service-list");
-
+    serviceList.innerHTML = "";
     // Kiểm tra xem data có phải là mảng và không rỗng hay không
     if (!Array.isArray(allServices) || allServices.length === 0) {
         // Nếu không có dữ liệu, hiển thị thông báo
@@ -82,7 +83,7 @@ function displayListServices(allServices) {
 }
 
 function createItemService(service) {
-    console.log(">>>>service", service);
+    // console.log(">>>>service", service);
     const servicePrice = parseFloat(service.price);
     const formattedPrice = new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -98,13 +99,12 @@ function createItemService(service) {
         <div class='location-time'>
             <p class='location-title-text'>Mô tả: ${service.description}</p>
         </div>
-        <div class='location-technicianId' data-technicianId="${allServices.technician.technician_id}">
-            <p class='location-technician-name' data-technicianName="${allServices.technician.technician_name}"></p>
+        <div class='location-technicianId' data-technicianId="${service.technician_id}">
+            <p class='location-technician-name'>Kỹ thuật viên:${service.technician_name}</p>
         </div>
         <div class='location-time'>
             <p class='location-title-text'>Giá: <span class="formatted-price">${formattedPrice}</p>
         </div>
-        <button>Đặt</button>
         <hr>
     </li>`;
 }
@@ -119,50 +119,41 @@ function handleEventItemService(allServices) {
             // Kiểm tra xem người dùng có click vào một phần tử LI không
             const listItem = event.target.closest("li");
             // console.log(">>>>>listItem", listItem.children);
-            if (listItem) {
-                const serviceName = listItem.children[0].textContent
-                    .split(":")[1]
-                    .trim();
-                const servicePrice = listItem.children[3].textContent
-                    .split(":")[1]
-                    .trim()
-                    .replace("₫", "")
-                    .trim();
+            // if (listItem) {
+            //     const serviceName = listItem.children[0].textContent
+            //         .split(":")[1]
+            //         .trim();
+            //     const servicePrice = listItem.children[3].textContent
+            //         .split(":")[1]
+            //         .trim()
+            //         .replace("₫", "")
+            //         .trim();
 
-                const dataServiceId = document.querySelector(
-                    ".location-title-service"
-                );
-                const dataTechnician = document.querySelector(
-                    ".location-technician-name"
-                );
-                const dataTechnicianId = document.querySelector(
-                    ".location-technicianId"
-                );
+            //     const dataServiceId = document.querySelector(
+            //         ".location-title-service"
+            //     );
+            //     const dataTechnician = document.querySelector(
+            //         ".location-technician-name"
+            //     );
+            //     const dataTechnicianId = document.querySelector(
+            //         ".location-technicianId"
+            //     );
 
-                const serviceId = dataServiceId.getAttribute("data-serviceid");
-                const technicianName = dataTechnician.getAttribute(
-                    "data-technicianName"
-                );
-                const technicianId =
-                    dataTechnicianId.getAttribute("data-technicianId");
+            //     const serviceId = dataServiceId.getAttribute("data-serviceid");
+            //     const technicianName = dataTechnician.getAttribute(
+            //         "data-technicianName"
+            //     );
+            //     const technicianId =
+            //         dataTechnicianId.getAttribute("data-technicianId");
 
-                document.getElementById("service_name").value = serviceName;
-                document.getElementById("service_price").value = servicePrice;
-                document.getElementById("technicianId").value = technicianName;
-                document.getElementById("technician_id").value =
-                    parseInt(technicianId);
-                document.getElementById("service_id").value =
-                    parseInt(serviceId);
-                document.getElementById("request-popup").style.display =
-                    "block";
-            }
-        });
-
-    // Đóng popup khi nhấn nút "Đóng"
-    document
-        .getElementById("close-popup")
-        .addEventListener("click", function () {
-            document.getElementById("request-popup").style.display = "none";
+            //     document.getElementById("service_name").value = serviceName;
+            //     document.getElementById("service_price").value = servicePrice;
+            //     document.getElementById("technicianId").value = technicianName;
+            //     document.getElementById("technician_id").value =
+            //         parseInt(technicianId);
+            //     document.getElementById("service_id").value =
+            //         parseInt(serviceId);
+            // }
         });
 }
 
@@ -182,64 +173,6 @@ function hidePopup() {
 
 document.getElementById("close-popup").addEventListener("click", hidePopup);
 
-function filterFormServices() {
-    const selectedPrice = document.getElementById("services_price").value;
-    const input = document.getElementById("service-type");
-    const filter = input.value.toLowerCase();
-    const serviceList = document.getElementById("service-list"); // Lấy danh sách dịch vụ
-    // Xóa nội dung danh sách dịch vụ cũ
-    serviceList.innerHTML = "";
-
-    // Ẩn danh sách nếu không có từ khóa nhập
-    if (!filter && !selectedPrice) {
-        serviceList.style.display = "none";
-        return;
-    }
-
-    let services = allServices.services;
-
-    let filteredServices = services.filter(
-        (service) => service.name.toLowerCase().includes(filter) // Lọc theo tên dịch vụ
-    );
-
-    // Nếu combobox giá đã được chọn, tiếp tục lọc theo giá
-    if (selectedPrice === "under_200k") {
-        filteredServices = filteredServices.filter(
-            (service) => parseFloat(service.price) < 200000
-        );
-    } else if (selectedPrice === "200k_to_500k") {
-        filteredServices = filteredServices.filter(
-            (service) =>
-                parseFloat(service.price) >= 200000 &&
-                parseFloat(service.price) <= 500000
-        );
-    } else if (selectedPrice === "over_500k") {
-        filteredServices = filteredServices.filter(
-            (service) => parseFloat(service.price) > 500000
-        );
-    }
-
-    // Hiển thị danh sách đã lọc
-    if (filteredServices.length === 0) {
-        serviceList.innerHTML =
-            "Không tìm thấy dịch vụ nào với các tiêu chí đã chọn";
-        serviceList.classList.add("error-service");
-        serviceList.style.display = "block";
-    } else {
-        serviceList.style.display = "block";
-        displayListServices(filteredServices);
-    }
-}
-
-document
-    .getElementById("service-type")
-    .addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            filterFormServices();
-        }
-    });
-
 function sendLocationToServer(userLat, userLon) {
     // console.log(">>>sendLocationToServer", userLat, userLon);
     var latitude = userLat;
@@ -247,6 +180,7 @@ function sendLocationToServer(userLat, userLon) {
     var role = document.getElementById("role").value;
     var userId = document.getElementById("userId").value;
     createMarker(userId, role, latitude, longitude);
+    //Lưu tọa độ của kỹ thuật viên
     $.ajax({
         type: "POST",
         url: "/save-location",
@@ -266,17 +200,59 @@ function sendLocationToServer(userLat, userLon) {
             console.log(status);
         },
     });
-    var id = userId;
-    axios.post(`/getServices/${id}/${role}/${latitude}/${longitude}`)
-        .then(async response => {
-            console.log("Update status response:", response);
-            console.log("Response services:", response.data.services);
-            allServices = response.data;
-            displayListServices(allServices);
-            handleEventItemService(allServices); // Xử lý khi click vào dịch vụ
-        }).catch(error => {
-            console.log("Update status error:", status);
-        });
+    sendFormService(latitude, longitude);
+}
+
+function sendFormService(latitude, longitude) {
+    const formSearchService = document.getElementById("service-form");
+    formSearchService.addEventListener("submit", function (e) {
+        e.preventDefault();
+        let lat = latitude;
+        let lon = longitude;
+        const formData = new FormData(this);
+
+        // Thêm tọa độ latitude và longitude vào formData
+        formData.append("latitude", lat);
+        formData.append("longitude", lon);
+
+        fetch("/filterServices", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+            },
+            body: formData,
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        "Network response was not ok " + response.statusText
+                    );
+                }
+                return response.json(); // Trả về JSON
+            })
+            .then((data) => {
+                console.log("Raw response from server:", data); // Kiểm tra phản hồi
+                allServices = data.listTechnicians;
+                displayListServices(allServices);
+                // handleEventItemService(allServices); // Xử lý khi click vào dịch vụ
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    });
+    // var id = userId;
+    // axios.post(`/getServices/${id}/${role}/${latitude}/${longitude}`)
+    //     .then(async response => {
+    //         console.log("Update status response:", response);
+    //         console.log("Response services:", response.data.services);
+    //         allServices = response.data;
+    //         displayListServices(allServices);
+    //         handleEventItemService(allServices); // Xử lý khi click vào dịch vụ
+    //     }).catch(error => {
+    //         console.log("Update status error:", status);
+    //     });
 
 }
 
@@ -299,11 +275,11 @@ function createMarker(userId, role, latitude, longitude) {
     const icon = role === "technician" ? technicianIcon : customerIcon;
 
     var marker = L.marker(position, { icon: icon }).addTo(map);
-    marker.bindPopup(`Id:${userId} - Role: ${role}`);
+    marker.bindPopup(`Vị trí hiện tại của bạn!`);
 }
 
 Pusher.logToConsole = true;
-var pusher = new Pusher("b5f44c6c2b7e9df067d7", {
+var pusher1 = new Pusher("b5f44c6c2b7e9df067d7", {
     cluster: "ap1",
 });
 
@@ -329,18 +305,51 @@ function updateTechnicianMarker(data) {
         }).addTo(map);
     }
 }
+//Xử lý chọn combobox giá
+document.getElementById("service_type").addEventListener("change", function () {
+    var priceSelect = document.getElementById("service-form-price");
+    priceSelect.innerHTML = ""; // Xóa tất cả các tùy chọn trước
+
+    // Lấy giá của dịch vụ đã chọn
+    var selectedOption = this.options[this.selectedIndex];
+    var selectedPrice = selectedOption.getAttribute("data-price");
+    var selectedType = selectedOption.getAttribute("data-name");
+    var selectedServiceId = selectedOption.getAttribute("data-service-id");
+
+    const servicePrice = parseFloat(selectedPrice);
+    const serviceId = parseInt(selectedServiceId);
+    const formattedPrice = new Intl.NumberFormat("vi-VN").format(servicePrice);
+
+    document.getElementById("service_price").value = formattedPrice;
+    document.getElementById("service_name").value = selectedType;
+    document.getElementById("service_id").value = serviceId;
+
+    if (selectedPrice) {
+        var option = document.createElement("option");
+        option.value = selectedOption.value;
+        option.textContent =
+            "Giá: " +
+            new Intl.NumberFormat("vi-VN").format(selectedPrice) +
+            " VND";
+        priceSelect.appendChild(option);
+        priceSelect.removeAttribute("disabled");
+    } else {
+        priceSelect.setAttribute("disabled", true);
+    }
+});
+
+document.getElementById("close-popup").addEventListener("click", hidePopup);
+
+// Đóng popup khi nhấn nút "Đóng"
+document.getElementById("close-popup").addEventListener("click", function () {
+    document.getElementById("request-popup").style.display = "none";
+});
 
 document
-    .getElementById("services_price")
-    .addEventListener("change", function () {
-        filterFormServices();
-    });
+    .getElementById("btn-book-now")
+    .addEventListener("click", function (event) {
 
-document
-    .getElementById("service-form")
-    .addEventListener("submit", function (event) {
-        event.preventDefault();
-        filterFormServices();
+        document.getElementById("request-popup").style.display = "block";
     });
 
 const formRequest = document.getElementById("request-form");
@@ -348,7 +357,7 @@ formRequest.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const formData = new FormData(this);
-
+    //Lưu request
     fetch("/save-request", {
         method: "POST",
         headers: {
@@ -361,13 +370,13 @@ formRequest.addEventListener("submit", function (e) {
         .then((response) => {
             if (!response.ok) {
                 throw new Error(
-                    "Network response was not ok " + response.statusText
+                    "Lỗi " + response.statusText
                 );
             }
-            return response.json(); // Trả về JSON
+            return response.json();  
         })
         .then((data) => {
-            console.log("Raw response from server:", data); // Kiểm tra phản hồi
+            console.log("Dữ liệu trả về từ server:", data);  
         })
         .catch((error) => {
             console.error("Error:", error);

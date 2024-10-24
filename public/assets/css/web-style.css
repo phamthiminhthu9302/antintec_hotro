@@ -81,7 +81,6 @@ input[type="text"],
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    margin-top: 5px;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -104,10 +103,6 @@ button {
     background-color: #007bff;
     color: #fff;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
 }
 
 .filter-results {
@@ -151,10 +146,11 @@ button:hover {
 }
 
 p.location-title-text {
-    margin-bottom: 0px !important;
+    margin-bottom: 3px !important;
     color: #000;
     font-size: 1rem;
     font-weight: 500;
+    margin-top: 0px;
 }
 
 .icon-phone {
@@ -437,25 +433,55 @@ textarea {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #dc3545; 
+    background-color: #dc3545;
     color: white;
     cursor: pointer;
-    margin-left: 10px;  
+    margin-left: 10px;
     margin-bottom: 5px;
 }
 
 .btn-close:hover {
-    background-color: #c82333;  
+    background-color: #c82333;
 }
 
 .error-service {
-    color: red;  
-    padding: 10px;  
-    display: none;  
+    color: red;
+    padding: 10px;
+    display: none;
 }
 
-.title-rescue{
+.title-rescue {
     text-align: center;
+}
+#btn-search-service {
+    border: 1px solid #4caf50;
+    border-radius: 0.5rem;
+    margin-bottom: 6px;
+    background-color: #4caf50;
+}
+
+button#btn-search-service:hover {
+    background-color: #45c549;
+}
+
+#btn-book-now {
+    border: 1px solid #007bff;
+    border-radius: 0.5rem;
+    margin-bottom: 6px;
+    background-color: #007bff;
+}
+
+button#btn-book-now:hover {
+    background-color: #78b0eb;
+}
+
+p.location-technician-name {
+    color: #000;
+    margin-bottom: 3px;
+}
+
+.hr-color{
+    color: #67748e;
 }
 
 /* Responsive design */

@@ -15,76 +15,88 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardUserController extends Controller
 {
-    public function index()
+    public function getAllServices()
     {
-
-        return view('dashboard');
+        $services = Service::all();
+        return view('dashboard')->with(['services' => $services]);
     }
 
     public function filterServices(Request $request)
     {
-        $customerLat = $request->latitude;
-        $customerLon = $request->longitude;
+        try {
+            // dd($request);
+            $userId = (int) $request->input('userId');
+            $role = $request->input('role');
+            $serviceId = (int) $request->input('service_id');
+            $customerLat = (float) $request->input('latitude');
+            $customerLon = (float) $request->input('longitude');
 
-        $customerLat = (float) $customerLat;
-        $customerLon = (float) $customerLon;
-        $maxDistance = 10;
-
-        // Lấy danh sách kỹ thuật viên online trong vòng 5 phút
-        $onlineTechnicians = DB::table('users as t')
-            ->join('locations as l', 't.user_id', '=', 'l.technician_id')
-            ->join('technician_availability as ta', 't.user_id', '=', 'ta.technician_id')
-            ->select(
-                't.user_id as technician_id',
-                't.username as technician_name',
-                'l.latitude',
-                'l.longitude',
-                'l.updated_at',
-                'ta.available_from',
-                'ta.available_to',
-                'ta.day_of_week'
-            )
-            ->where('l.updated_at', '>=', Carbon::now()->subMinutes(5)) // Kiểm tra online trong vòng 5 phút
-            ->where(function ($query) {
-                $currentDay = Carbon::now()->format('l');
-                $currentTime = Carbon::now()->format('H:i:s');
-
-                $query->where('ta.day_of_week', 'like', '%' . $currentDay . '%')
-                    ->where('ta.available_from', '<=', $currentTime)
-                    ->where('ta.available_to', '>=', $currentTime);
-            })
-            ->get();
-
-        $nearestTechnician = null;
-        $shortestDistance = $maxDistance;
-
-        foreach ($onlineTechnicians as $technician) {
-            $distance = $this->haversineDistance($customerLat, $customerLon, $technician->latitude, $technician->longitude);
-
-            if ($distance <= $shortestDistance) {
-                $nearestTechnician = $technician;
-                $shortestDistance = $distance;
+            if ($userId && $role === 'customer') {
+                $customerLat = (float) $request->input('latitude');
+                $customerLon = (float) $request->input('longitude');
             }
-        }
-        if ($nearestTechnician) {
-            // Lấy tất cả dịch vụ của kỹ thuật viên gần nhất
-            $technicianServices = DB::table('technician_service as ts')
+
+            // if (is_null($customerLat) || is_null($customerLon) || !$serviceId) {
+            //     return response()->json(['error' => 'Thiếu thông tin hoặc dữ liệu không hợp lệ'], 400);
+            // }
+
+            $technicians = DB::table('users as t')
+                ->join('technician_service as ts', 't.user_id', '=', 'ts.technician_id')
                 ->join('services as s', 'ts.service_id', '=', 's.service_id')
-                ->select('s.service_id', 's.name', 's.description', 's.price')
-                ->where('ts.technician_id', '=', $nearestTechnician->technician_id)
+                ->join('locations as l', 't.user_id', '=', 'l.technician_id')
+                ->join('technician_availability as ta', 't.user_id', '=', 'ta.technician_id')
+                ->select(
+                    't.user_id as technician_id',
+                    't.username as technician_name',
+                    'ts.service_id',
+                    's.name',
+                    's.price',
+                    's.description',
+                    'l.latitude',
+                    'l.longitude',
+                    'l.updated_at',
+                    'ta.available_from',
+                    'ta.available_to',
+                    'ta.day_of_week'
+                )
+                ->where('ts.service_id', $serviceId)
+                ->where('l.updated_at', '>=', Carbon::now()->subMinutes(5)) // Kiểm tra online trong vòng 5 phút
+                ->where(function ($query) {
+                    $currentDay = Carbon::now()->format('l');
+                    $currentTime = Carbon::now()->format('H:i:s');
+
+                    $query->where('ta.day_of_week', 'like', '%' . $currentDay . '%')
+                        ->where('ta.available_from', '<=', $currentTime)
+                        ->where('ta.available_to', '>=', $currentTime);
+                })
                 ->get();
+
+
+            // Lọc kỹ thuật viên theo khoảng cách 10km
+            $filteredTechnicians = $technicians->filter(function ($technician) use ($customerLat, $customerLon) {
+                $distance = $this->haversineDistance($customerLat, $customerLon, $technician->latitude, $technician->longitude);
+                return $distance <= 10;
+            });
+
+            // Kiểm tra nếu danh sách kỹ thuật viên bị rỗng
+            // if ($filteredTechnicians->isEmpty()) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Không có kỹ thuật viên nào trong vòng bán kính 10km',
+            //     ], 404);  
+            // }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tìm thấy kĩ thuật viên trong vòng bán kính 10km',
-                'technician' => $nearestTechnician,
-                'services' => $technicianServices
+                'message' => 'Tìm thấy các kĩ thuật viên trong vòng bán kính 10km',
+                'listTechnicians' => $filteredTechnicians,
             ], 200);
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Không có kĩ thuật viên nào trong vòng bán kính 10km'
-            ], 200);
+                'message' => 'Đã xảy ra lỗi trong quá trình tìm kiếm kỹ thuật viên',
+                'trace' => $e->getMessage(),
+            ], 500);
         }
     }
 

@@ -4,8 +4,8 @@ document
     .addEventListener("click", function (event) {
         event.preventDefault();
 
-        const technicianId = document.getElementById("technician_id").value;
-        const serviceId = document.getElementById("service_id").value;
+        const technicianId = document.getElementById("technician_form_id").value;
+        const serviceId = document.getElementById("service_form_id").value;
 
         if (!technicianId || !serviceId) {
             alert("Please select both technician and service.");
@@ -34,9 +34,9 @@ document
             })
             .then((data) => {
                 if (data.error) {
-                    alert(data.error); // Thông báo lỗi nếu dịch vụ đã tồn tại
+                    alert(data.error); 
                 } else {
-                    alert(data.message); // Thông báo thành công
+                    alert(data.message);  
                 }
             })
             .catch((error) => {
@@ -65,12 +65,12 @@ function deleteService(serviceId) {
                 return response.json();
             })
             .then((data) => {
-                alert(data.message); // Thông báo thành công
-                location.reload(); // Tải lại trang hoặc xóa hàng trong bảng
+                alert(data.message);  
+                location.reload();  
             })
             .catch((error) => {
                 console.error("Error:", error);
-                alert("Error deleting the service."); // Thông báo lỗi
+                alert("Error deleting the service.");  
             });
     }
 }

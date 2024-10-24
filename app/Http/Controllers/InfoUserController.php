@@ -170,7 +170,7 @@ class InfoUserController extends Controller
 
             return response()->json(['message' => 'Thêm kỹ năng thành công!'], 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Có lỗi xảy ra! ' . $e->getMessage()], 500);
         }
     }
 
@@ -187,7 +187,7 @@ class InfoUserController extends Controller
 
             return response()->json(['message' => 'Xóa dịch vụ thành công'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Có lỗi xảy ra! ' . $e->getMessage()], 500);
         }
     }
 }
