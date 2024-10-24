@@ -31,16 +31,20 @@ Route::post("check-login", [AuthController::class, "checkLogin"]);
 Route::post("register", [AuthController::class, "register"]);
 
 Route::group(['middleware' => ["auth:sanctum"]], function () {
+
+    // profile
     Route::get("profile", [ProfileController::class, "profile"]);
     Route::put("profile", [ProfileController::class, "updateProfile"]);
 
     Route::put("profile/password", [ProfileController::class, "updatePassword"]);
     Route::put("profile/payment", [ProfileController::class, "updatePaymentMethod"]);
 
+    Route::post("profile/updateTech", [ProfileController::class, "updateInfoTech"]);
+    Route::post('profile/available', [ProfileController::class, "TechAvailability"]);
+
     Route::get("logout", [AuthController::class, "logout"]);
 
-    Route::post("profile/updateTech", [ProfileController::class, "updateInfoTech"]);
-
+    //message
     Route::get('/messages', [ChatController::class, 'getMessagesByToken']);
 
     Route::post('/messages', [ChatController::class, 'sendMessage']);
@@ -50,14 +54,12 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     //only admin can access messages by path variable
     Route::get('/admin/messages/sender/{id}', [ChatController::class, 'getMessagesByUserId']);
 
-    Route::post('/requests', [RequestController::class, 'createRequest']);
-    Route::put('/requests/status', [RequestController::class, 'updateRequestStatus']);
-    Route::put('/notifications/read', [NotificationController::class, 'updateReadNotification']);
-
+    //Location
     Route::get('/location', [LocationController::class, 'getLocation']);
     Route::post('/location/add', [LocationController::class, 'createLocation']);
     Route::put('/location/update', [LocationController::class, 'updateLocation']);
 
+    //Service
     Route::get('/services-management', [ServiceHistoryController::class, 'showRequestHistoryByToken']);
     Route::get('/admin/services-management/{userId}', [ServiceHistoryController::class, 'showRequestHistoryByAdmin']);
 
@@ -66,13 +68,24 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::post('services/store', [ServicesController::class, 'store']);
     Route::delete('services/delete/{i}', [ServicesController::class, 'delete']);
 
-    Route::apiResource('reviews', ReviewController::class);
+   
 
-    Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
     Route::get("/technician/services", [TechnicianServiceController::class, "getTechnicianServices"]);
     Route::post("/technician/services", [TechnicianServiceController::class, "createTechnicianService"]);
     Route::put("/technician/services", [TechnicianServiceController::class, "updateTechnicianService"]);
     Route::get("/technician/services/available", [TechnicianServiceController::class, "getAllAvailableTechniciansByServiceId"]);
+    
+    //Review
+    Route::apiResource('reviews', ReviewController::class);
+    
+    //Request
+    Route::post('/requests', [RequestController::class, 'createRequest']);
+    Route::put('/requests/status', [RequestController::class, 'updateRequestStatus']);
+    Route::put('/notifications/read', [NotificationController::class, 'updateReadNotification']);
+ 
+    Route::put('/requests/update/{id}', [RequestController::class, 'updateDescription']);
+
+    //Notification
     Route::get('/notifications', [NotificationController::class, "getAllNotificationsByCustomerId"]);
-    Route::post('profile/available', [ProfileController::class, "TechAvailability"]);
+    
 });
