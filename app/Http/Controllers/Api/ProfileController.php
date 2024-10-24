@@ -79,12 +79,13 @@ class ProfileController extends Controller
     public function updatePassword(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'password' => ['required', 'max:100']//[Password::defaults()]
+            'password' => ['required', 'max:100', 'confirmed'],
+            'password_confirmation' => 'required|string|min:8',
         ]);
 
         $this->setField('password', Hash::make($validated['password']));
 
-        return $this->success(auth()->user());
+        return $this->message('change password success');
     }
 
     public function updateRole(Request $request)

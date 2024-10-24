@@ -15,13 +15,32 @@ class AuthController extends Controller
 {
     use HttpResponses;
 
-    public function register(CreateUserRequest $request)
+    public function register(Request $request)
     {
         try {
-            $request->validated($request->all());
-            if ($request->password !== $request->password_confirmation) {
-                return $this->fail("Password mismatch");
+            $validateUser = Validator::make($request->all(), [
+                'username' => 'required|string|max:50|unique:users',
+                'password' => 'required|string|min:8|confirmed', 
+                'password_confirmation' => 'required|string|min:8',
+                'email' => 'required|email|max:100|unique:users',
+                'phone' => [
+                    'required',
+                    'string',
+                    'regex:/^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/',
+                    'unique:users',
+                ],
+                'role' => 'required|in:customer,technician',
+                'address' => 'required|string'
+            ]);
+
+            if ($validateUser->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validateUser->errors()
+                ], 400);
             }
+
             $user = User::create([
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
@@ -30,11 +49,11 @@ class AuthController extends Controller
                 'role' => $request->role,
                 'address' => $request->address,
             ]);
-            $token = $user->createToken('API Token')->plainTextToken;
+            
             return response()->json([
                 'status' => true,
                 'message' => 'User create successfully',
-                'token' => $token,
+                'user' => $user,
             ], 200);
         } catch (\Throwable $e) {
             return response()->json([
@@ -67,7 +86,6 @@ class AuthController extends Controller
                 [
                     'email' => 'email|max:100',
                     'password' => 'required|string|min:8',
-                    'username' => 'string|max:50',
                     'phone' => 'string|max:50',
                 ]);
             if ($validateUser->fails()) {
@@ -78,12 +96,17 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $credentials = $request->only($request->has('email') ? 'email' : 'phone', 'password', 'password');
-
-            $usernameCredentials = $request->only(['username', 'password']);
-
-
-            if (Auth::attempt($credentials) || Auth::attempt($usernameCredentials)) {
+            if ($request->has('email')) {
+                $credentials = $request->only('email', 'password');
+            } elseif ($request->has('phone')) {
+                $credentials = $request->only('phone', 'password');
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Email or phone is required',
+                ], 401);
+    }
+            if (Auth::attempt($credentials)) {
                 session()->regenerate();
                 $user = Auth::user();
                 $token = $user->createToken('API Token', ['role:USER'])->plainTextToken;

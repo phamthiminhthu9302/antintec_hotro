@@ -16,6 +16,19 @@ class LocationController extends Controller
 
             $useData = auth()->user();
 
+            $validate = Validator::make($request->all(), [
+                'latitude' => 'required|numeric|between:-90,90',  
+                'longitude' => 'required|numeric|between:-180,180',
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validate->errors()
+                ], 400);
+            }
+
             Location::create([
                 'technician_id' => $useData->user_id,
                 'latitude' => $request->latitude,
