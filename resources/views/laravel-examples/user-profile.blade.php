@@ -223,20 +223,20 @@
                                     <div class="card-header pb-0 text-center">
                                         <div class="d-flex flex-row align-items-center" style="gap:16px ;justify-content: center">
                                             <div class="h5-flex" style="position: relative;top: 62px;right: 36px">
-                                                <h5 class="header-text">Add skill: </h5>
+                                                <h5 class="header-text">Add service: </h5>
                                             </div>
                                             <div class="d-flex mt-3">
                                                 @csrf
                                                 <div class="add-skill-container">
                                                     <div class="mb-3">
-                                                        <label for="technician_id">Technician:</label>
-                                                        <input type="hidden" id="technician_id" name="technician_id" value="{{ auth()->user()->user_id }}">
+                                                        <label for="technician_form_id">Technician:</label>
+                                                        <input type="hidden" id="technician_form_id" name="technician_id" value="{{ auth()->user()->user_id }}">
                                                         <input type="text" value="{{ auth()->user()->username }} ({{ auth()->user()->user_id }})" readonly>
                                                     </div>
 
                                                     <div class="mb-3" style="margin: 4px!important">
-                                                        <label for="service_id" class="form-label">Select Skill (Service)</label>
-                                                        <select id="service_id" class="form-select" name="service_id" required>
+                                                        <label for="service_form_id" class="form-label">Select Skill (Service)</label>
+                                                        <select id="service_form_id" class="form-select" name="service_id" required>
                                                             <option selected disabled>Choose Service</option>
                                                             @foreach($services as $service)
                                                             <option value="{{ $service->service_id }}">{{ $service->name }}</option>
