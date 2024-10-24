@@ -45,10 +45,11 @@ class RequestControllerTest extends ApiSender
     }
 
     public function test_updateRequestSuccess()
-    {
-        $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
+    {   //user id = 8:  Bearer 12|2lSS0VmtPjAotLesQF14Klxu9sr9yQ8CZtvUgKHI2ce7e940
+        //$authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc'; user id = 12
+        $authorization =  'Bearer 12|2lSS0VmtPjAotLesQF14Klxu9sr9yQ8CZtvUgKHI2ce7e940';
         $response = $this->sendApi('put', '/api/requests/status', [
-            'request_id' => '11',
+            'request_id' => '15',
             'status' => 'completed'
         ], $authorization);
         echo $response->getContent();
@@ -59,31 +60,12 @@ class RequestControllerTest extends ApiSender
     {
         $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         $response = $this->sendApi('put', '/api/requests/status', [
-            'request_id' => '11',
+            'request_id' => '15',
             'status' => 'completed'
-        ], $authorization);
-        echo $response->getContent();
-        $response->assertStatus(200);
-    }
-
-    public function test_readNotification()
-    {
-        $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
-        $response = $this->sendApi('put', '/api/requests/read', [
-            'notification_id' => '5'
-        ], $authorization);
-        echo $response->getContent();
-        $response->assertStatus(200);
-    }
-
-    public function test_readNotificationFailed()
-    {
-        //failed because user id not match in notification table
-        $authorization = 'Bearer 5|qp3WrlQaLvezo6mHfQCLv2LZCW00G5P4SPKO4TmUde48944b';
-        $response = $this->sendApi('put', '/api/requests/read', [
-            'notification_id' => '5'
         ], $authorization);
         echo $response->getContent();
         $response->assertStatus(400);
     }
+
+
 }

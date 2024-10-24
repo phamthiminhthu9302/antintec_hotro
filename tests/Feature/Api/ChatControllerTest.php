@@ -28,6 +28,7 @@ class ChatControllerTest extends ApiSender
         $response = $this->sendApi('GET', '/api/admin/messages/sender/12', [], $authorization);
         echo $response->getContent();
         $response->assertStatus(200);
+
     }
 
     public function test_getMessageByTokenSuccess(): void
@@ -43,15 +44,15 @@ class ChatControllerTest extends ApiSender
         $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         $response = $this->sendApi('GET', '/api/messages', ['receiver_id' => '10'], $authorization);
         echo $response->getContent();
-        $response->assertStatus(400);
+        $response->assertStatus(404);
     }
 
     public function test_sendMessageSuccess(): void
     {
         $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         $response = $this->sendApi('POST', '/api/messages', [
-            'request_id' => '7',
-            'message' => 'sender id 12 send from php unit test to receiver id 8',
+            'request_id' => '14',
+            'message' => 'sender id 12 send from php unit test 2nd time to receiver id 8',
             'receiver_id' => '8'
         ], $authorization);
         echo $response->getContent();

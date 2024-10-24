@@ -67,6 +67,9 @@ class RequestController extends Controller
             ['request_id.exists' => 'Invalid request id',
                 'status.in' => 'Invalid status.  Valid status: [pending, cancelled, completed, in_progress]']);
         $userRequest = \App\Models\Request::where('request_id', $validated['request_id'])->with('service')->first();
+        if (Auth::user()->user_id != $userRequest->technician_id) {
+            return $this->fail("This request belongs to technician id " . $userRequest['technician_id']. ' while your id is ' . $user->user_id);
+        }
         $userRequest->status = $validated['status'];
         $statusMessages = ['pending' => "đang chờ xác nhận",
             'in_progress' => "đang được thực hiện",
@@ -74,66 +77,57 @@ class RequestController extends Controller
             'completed' => "đã hoàn thành"];
         $message = "Yêu cẩu " . $userRequest['service']['name'] . " của bạn " . $statusMessages[$validated['status']];
         Notification::create([
-            'user_id' => $user['user_id'],
+            'user_id' => $userRequest['customer_id'],
             'message' => $message,
             'is_read' => false
         ]);
+        if($validated['status'] === 'completed') {
+            $userRequest->completed_at = date("Y-m-d H:i:s");
+        }
         $userRequest->save();
-        return $this->success($userRequest);
+        return $this->success($message);
     }
 
-    public function updateReadNotification(HttpRequest $request): JsonResponse
+
+
+    public function updateDescription(HttpRequest $request, $id): JsonResponse
     {
-        $user = auth()->user();
-        $validated = $request->validate([
-            "notification_id" => ['required', 'numeric'],
-        ]);
-
-        $notification = Notification::where('notification_id', $validated['notification_id'])->first();
-        if ($notification['user_id'] === $user['user_id']) {
-            $notification->is_read = true;
-            $notification->save();
-            return $this->success($notification);
-        }
-        return $this->fail("Invalid user");
-    }
-    public function updateDescription(HttpRequest $request,$id):JsonResponse{
         $model = \App\Models\Request::find($id);
-        $data = $model->description."\n".Carbon::now()->toDateTimeString().' (KTV): '.$request->description;
-        if(!$model)
-        {
-            return response()->json(['message' => 'No request found' ],404);
+        $data = $model->description . "\n" . Carbon::now()->toDateTimeString() . ' (KTV): ' . $request->description;
+        if (!$model) {
+            return response()->json(['message' => 'No request found'], 404);
         }
-        if($model->status !== 'in_progress'){
-            return response()->json(['message' => 'Request is no longer in progress' ]);
+        if ($model->status !== 'in_progress') {
+            return response()->json(['message' => 'Request is no longer in progress']);
         }
-        if($model->technician_id != Auth::user()->user_id){
-            return response()->json(['message' => 'Not authorized' ],403);
+        if ($model->technician_id != Auth::user()->user_id) {
+            return response()->json(['message' => 'Not authorized'], 403);
         }
-        if($model->update(array('description'=>$data))){
-            return response()->json(['message' => 'Description updated' ]);
-        }
-        else {
-            return response()->json(['message' => 'failed' ]);
+        if ($model->update(array('description' => $data))) {
+            return response()->json(['message' => 'Description updated']);
+        } else {
+            return response()->json(['message' => 'failed']);
         }
     }
 
-    public function findNearestTech($latitude, $longitude, $tech = []){
+    public function findNearestTech($latitude, $longitude, $tech = [])
+    {
 
-        $distance = '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radian(longitude - radians(?)) + 
+        $distance = '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radian(longitude - radians(?)) +
         sin(radians(?)) * sin(radians(latitude)))) AS distance';
 
-        $query = DB::table('locations')->select('technician_id, latitude, longitude, '. $distance,[$latitude, $longitude, $latitude]);
+        $query = DB::table('locations')->select('technician_id, latitude, longitude, ' . $distance, [$latitude, $longitude, $latitude]);
 
-        if(!empty($tech)){
+        if (!empty($tech)) {
             $query->whereNotIn('technician_id', $tech);
         };
 
         return $query->orderBy('distance', 'ASC')->first();
     }
 
-    public function create(HttpRequest $request){
-        
+    public function create(HttpRequest $request)
+    {
+
         $request->validate([
             'service_id' => 'required',
             'latitude' => 'required|numeric',
@@ -153,30 +147,31 @@ class RequestController extends Controller
 
         $result = Request::create([
             'customer_id' => $customer_id,
-            'technician_id' => $technician_id,  
+            'technician_id' => $technician_id,
             'service_id' => $request->service_id,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'photo' => $request->photo,
             'description' => $request->description,
-            'status' => 'pending',   
+            'status' => 'pending',
             'location' => $request->location,
         ]);
 
         return $this->success($result);
     }
 
-    public function statusRequest($request_id, $status){
+    public function statusRequest($request_id, $status)
+    {
 
         $request = Request::find($request_id);
 
-        if(!$request){
+        if (!$request) {
             return $this->message("Don't find request");
         }
 
         $arrTech = [];
 
-        if($status == 'in_progress'){
+        if ($status == 'in_progress') {
             $request->update([
                 'status' => 'in_progress'
             ]);
@@ -184,7 +179,7 @@ class RequestController extends Controller
             return $this->message("Status update success");
         }
 
-        if($status == 'completed'){
+        if ($status == 'completed') {
             $request->update([
                 'status' => 'completed'
             ]);
@@ -194,7 +189,7 @@ class RequestController extends Controller
             return $this->message("Status update success");
         }
 
-        if($status == 'cancelled'){
+        if ($status == 'cancelled') {
             $arrTech[] = $request->technician_id;
             $technician = $this->findNearestTech($request->latitude, $request->longitude, $arrTech);
 
@@ -206,4 +201,5 @@ class RequestController extends Controller
             return $this->success($request);
         }
     }
+
 }

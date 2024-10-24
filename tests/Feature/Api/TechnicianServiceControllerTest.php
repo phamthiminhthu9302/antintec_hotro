@@ -24,7 +24,7 @@ class TechnicianServiceControllerTest extends ApiSender
         //$authorization = 'Bearer 11|uCIxwOEhIfpjxTrBhBQcd2V8anlLY1CU8OQWfLJY4924774e';
         $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         $params = [
-            'service_id' => '3',
+            'service_id' => '5',
             'status' => 'active',
             'available_from' => date('Y-m-d H:i:s'),
             'available_to' => date('Y-m-d H:i:s'),
@@ -36,15 +36,16 @@ class TechnicianServiceControllerTest extends ApiSender
 
     public function test_updateTechnicianService()
     {
-        $authorization = 'Bearer 11|uCIxwOEhIfpjxTrBhBQcd2V8anlLY1CU8OQWfLJY4924774e';
+        //'Bearer 11|uCIxwOEhIfpjxTrBhBQcd2V8anlLY1CU8OQWfLJY4924774e'
+        $authorization = 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc';
         $params = [
-            'service_id' => '3',
+            'service_id' => '5',
             'status' => 'inactive',
             'available_from' => date('Y-m-d H:i:s'),
             //'available_to' => date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->sendApi('put', 'api/technician/services/3', $params, $authorization);
+        $response = $this->sendApi('put', 'api/technician/services', $params, $authorization);
         echo $response->getContent();
         $response->assertStatus(200);
     }

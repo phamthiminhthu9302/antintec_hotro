@@ -58,13 +58,14 @@ class ProfileControllerTest extends TestCase
     }
 
     public function test_updatePaymentMethod(): void
-    {
+    {   //user id 12: Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer 5|qp3WrlQaLvezo6mHfQCLv2LZCW00G5P4SPKO4TmUde48944b',
+            //'Authorization' => 'Bearer 5|qp3WrlQaLvezo6mHfQCLv2LZCW00G5P4SPKO4TmUde48944b',
+            'Authorization' => 'Bearer 7|qrsGEzcHaXYDoeUHNEucyYzLpSHbG3LxmJUvXf6Dd61396fc',
             'Accept' => 'application/vnd.api+json',
             'Content-Type' => 'application/vnd.api+json'
         ])->json('PUT', '/api/profile/payment', [
-            "request_id" => 4,
+            "request_id" => 13,
             "payment_method" => "e_wallet"]);
         echo $response->getContent();
         $response->assertStatus(200);
