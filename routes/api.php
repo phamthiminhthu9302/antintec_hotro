@@ -74,4 +74,5 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::put("/technician/services", [TechnicianServiceController::class, "updateTechnicianService"]);
     Route::get("/technician/services/available", [TechnicianServiceController::class, "getAllAvailableTechniciansByServiceId"]);
     Route::get('/notifications', [NotificationController::class, "getAllNotificationsByCustomerId"]);
+    Route::post('profile/available', [ProfileController::class, "TechAvailability"]);
 });

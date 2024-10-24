@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Payment;
-use App\Models\TechAvailability;
+use App\Models\TechnicianAvailability;
 
 class ProfileController extends Controller
 {
@@ -150,27 +151,43 @@ class ProfileController extends Controller
     }
 
     public function TechAvailability(Request $request){
+        try {
 
-        $request->validate([
-            'available_from' => 'required|date_format:H:i',
-            'available_to' => 'required|date_format:H:i|after:available_from',
-            'day_of_week' => 'nullable|array|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-        ]);
+            $validate = Validator::make($request->all(), [
+                'available_from' => 'required|date_format:H:i',
+                'available_to' => 'required|date_format:H:i|after:available_from',
+                'day_of_week.*' => 'required|string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            ]);
 
-        $useData = auth()->user();
+            if ($validate->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validate->errors()
+                ], 400);
+            }
 
-        $technician_id = $useData->user_id;
+            $useData = auth()->user();
 
-        $tech_available = TechAvailability::updateOrCreate(
-            ['technician_id' => $technician_id],
-            [
-                'available_from' => $request->available_from,
-                'available_to' => $request->available_to,
-                'day_of_week' => json_encode($request->day_of_week),
-            ],
-        );
+            $technician_id = $useData->user_id;
 
-        return $this->message('Update Available Information success');
+            $tech_available = TechnicianAvailability::updateOrCreate(
+                ['technician_id' => $technician_id],
+                [
+                    'available_from' => $request->available_from,
+                    'available_to' => $request->available_to,
+                    'day_of_week' => $request->day_of_week,
+                ],
+            );
+
+            return $this->message('Update Available Information success');
+        }
+        catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 }
